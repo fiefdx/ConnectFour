@@ -25,14 +25,104 @@ namespace ConnectFour
     public class CPUPlayer : Player
     // CPU Player class
     {
+        public string Thought { get; set; } // player's thought
+
         public CPUPlayer(int id, Disc disc) : base(id, disc, "CPU")
         {
+            Thought = "";
+        }
 
+        private int AvailableClosePlace(Table table, int x, int y)
+        {
+            int[] xs = { -1, -1, -1 }; // close place has only 3 possible ys
+            int n = 0;
+            for (int i = x - 1; i <= x + 1; i++)
+            {
+                int dy = table.AvailablePlaceY(i) - y;
+                if (dy <= 1 && dy >= -1)
+                {
+                    xs[n] = i;
+                    n++;
+                }
+            }
+            if (n > 0) // has available ys
+            {
+                Random random = new Random();
+                return xs[random.Next(0, n)]; // random choose 1 y
+            }
+            return -1; // No available close place found
+        }
+
+        private int CheckWinMove(Table table) // check whether has a move for win
+        {
+            return -1;
+        }
+
+        private int CheckDefensiveMove(Table table) // check whether has a move for defensive
+        {
+            return -1;
+        }
+
+        private int CheckOffensiveMove(Table table) // check whether has a move for offensive
+        {
+            return -1;
+        }
+
+        private int GetAIMove(Table table) // AI move
+        {
+            int x = -1;
+            if (table.Full()) // whether the table is full
+            {
+                x = CheckWinMove(table);
+                Thought = "Win: " + (x + 1);
+                if (x == -1) // back to defensive move
+                {
+                    x = CheckDefensiveMove(table);
+                    Thought = "Defensive: " + (x + 1);
+                    if (x == -1) // back to offensive move
+                    {
+                        x = CheckOffensiveMove(table);
+                        Thought = "Offensive: " + (x + 1);
+                        if (x == -1) // back to random move
+                        {
+                            Thought = "Random: " + (x + 1);
+                        }
+                    }
+                }
+            }
+            return x;
         }
 
         public override int GetMove(Table table)
         {
-            return -1;
+            if (Id == 1)
+            {
+                if (table.DiscCounter == 0)
+                {
+                    Thought = "Initial: 4";
+                    return 3; // Always play in the middle column for Player 1 on the first move
+                }
+                else if (table.DiscCounter == 2)
+                {
+                    int x = AvailableClosePlace(table, 3, 5);
+                    Thought = "Initial: " + (x + 1);
+                    return x; // Always play in the second column for Player 1 on the second move
+                }
+                return GetAIMove(table); // For Player 1, use AI logic after the first two moves
+            }
+            else if (Id == 2)
+            {
+                if (table.DiscCounter == 1 || table.DiscCounter == 0)
+                {
+                    Thought = "Initial: 4";
+                    return 3; // Always play in the middle column for Player 2 on the first move
+                }
+                return GetAIMove(table); // For Player 2, use AI logic after the first two moves
+            }
+            else
+            {
+                return GetAIMove(table); // use AI logic
+            }
         }
     }
 }

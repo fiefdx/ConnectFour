@@ -102,6 +102,11 @@ namespace ConnectFour
             return ConsoleColor.Black; // No winner
         }
 
+        public bool Full()
+        {
+            return DiscCounter < 42;
+        }
+
         public void Render(Char[,] displayCache, int offsetX = 0, int offsetY = 0)
         {
             // render Table's Discs into displayCache
