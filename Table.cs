@@ -22,24 +22,31 @@ namespace ConnectFour
             DiscCounter = table.DiscCounter;
         }
 
-        public bool PlaceDisc(int x, Disc disc)
+        public bool PlaceDisc(int x, Disc disc) // place a disc
         {
-            // place a disc
+            for (int y = Discs.GetLength(1) - 1; y >= 0; y--) // iterate from y = 5 to y = 0
+            {
+                if (Discs[x, y] == null) // table has a empty place at (x, y)
+                {
+                    DiscCounter++; // add DiscCounter
+                    Discs[x, y] = new Disc(x, y, disc.Symbol, disc.Color, DiscCounter); // place a new disc
+                    return true;
+                }
+            }
             return false;
         }
 
-        public void RemoveDisc(int x, int y)
+        public void RemoveDisc(int x, int y) // remove a disc
         {
-            // remove a disc
             Discs[x, y] = null;
         }
 
         public int AvailablePlaceY(int x)
         {
-            // check available x place and return target y
-            for (int y = Discs.GetLength(1) - 1; y >= 0; y--)
+            // check available x place and return available y
+            for (int y = Discs.GetLength(1) - 1; y >= 0; y--) // iterate from y = 5 to y = 0, bottom to top
             {
-                if (Discs[x, y] == null)
+                if (Discs[x, y] == null) // table has a empty place at (x, y)
                 {
                     return y;
                 }
@@ -47,10 +54,9 @@ namespace ConnectFour
             return -1;
         }
 
-        public ConsoleColor CheckStatus()
+        public ConsoleColor CheckStatus() // check horizontal, vertical, and diagonal connections, return winner's disc color
         {
-            // Check horizontal, vertical, and diagonal connections
-            for (int y = 0; y < 6; y++)
+            for (int y = 0; y < 6; y++) // check horizontal
             {
                 for (int x = 0; x < 4; x++)
                 {
@@ -62,7 +68,7 @@ namespace ConnectFour
                 }
             }
 
-            for (int y = 3; y < 6; y++)
+            for (int y = 3; y < 6; y++) // check vertical
             {
                 for (int x = 0; x < 7; x++)
                 {
@@ -74,7 +80,7 @@ namespace ConnectFour
                 }
             }
 
-            for (int y = 3; y < 6; y++)
+            for (int y = 3; y < 6; y++) // check diagonal
             {
                 for (int x = 0; x < 4; x++)
                 {
