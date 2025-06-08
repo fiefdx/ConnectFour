@@ -16,7 +16,13 @@ namespace ConnectFour
             DiscCounter = 0;
         }
 
-        public bool PlaceDisc(int x, ConsoleColor color)
+        public void CopyFrom(Table table) // copy data from another table
+        {
+            Array.Copy(table.Discs, Discs, Width * Height);
+            DiscCounter = table.DiscCounter;
+        }
+
+        public bool PlaceDisc(int x, Disc disc)
         {
             // place a disc
             return false;

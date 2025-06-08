@@ -7,13 +7,13 @@ namespace ConnectFour
     {
         public string Type { get; private set; } // "Human" or "CPU"
         public int Id { get; private set; } // 1 or 2
-        public ConsoleColor Color { get; set; }
+        public Disc Disc { get; private set; } // player's disc
 
-        public Player(int id, ConsoleColor color, string type = "Human")
+        public Player(int id, Disc disc, string type = "Human")
         {
             Id = id;
             Type = type;
-            Color = color;
+            Disc = disc;
         }
 
         public virtual int GetMove(Table table)
@@ -25,7 +25,7 @@ namespace ConnectFour
     public class CPUPlayer : Player
     // CPU Player class
     {
-        public CPUPlayer(int id, ConsoleColor color) : base(id, color, "CPU")
+        public CPUPlayer(int id, Disc disc) : base(id, disc, "CPU")
         {
 
         }

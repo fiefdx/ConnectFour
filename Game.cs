@@ -36,9 +36,9 @@ namespace ConnectFour
             }
         }
 
-        public bool PlaceDisc(int x, ConsoleColor color)
+        public bool PlaceDisc(int x, Disc disc)
         {
-            return GameTable.PlaceDisc(x, color);
+            return GameTable.PlaceDisc(x, disc);
         }
 
         public void UpdateWin(ConsoleColor color)
@@ -87,7 +87,7 @@ namespace ConnectFour
         public void RenderFrame(int cX, int cY)
         {
             RenderTable();
-            RenderCursor(cX, cY, TurnPlayer.Color);
+            RenderCursor(cX, cY, TurnPlayer.Disc.Color);
             RenderPlayerInfo();
             RenderPrompts();
         }
@@ -98,28 +98,30 @@ namespace ConnectFour
         static void Main(string[] args)
         {
             int x = 0, y = 0; // cursor x, y
-            Game game;
+            Game game; // game variable
             Console.Clear(); // clear console
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.ForegroundColor = ConsoleColor.DarkBlue; // console output color
             Console.WriteLine("Welcome to Connect Four!");
             Console.WriteLine("Click '1' for Single player mode, other keys for Two players mode.");
 
             ConsoleKeyInfo keyInfo = Console.ReadKey(true); // keyboard input
+            Disc disc1 = new Disc(0, 0, new string[] { " XXXXX ", "XXXXXXX", " XXXXX " }, ConsoleColor.Red); // disc for first player
+            Disc disc2 = new Disc(0, 0, new string[] { " OOOOO ", "OOOOOOO", " OOOOO " }, ConsoleColor.Blue); // disc for second player
             if (keyInfo.Key == ConsoleKey.D1) // Single player mode
             {
                 Random random = new Random();
-                if (random.Next(0, 2) == 0)
+                if (random.Next(0, 2) == 0) // first player is human, second player is cpu
                 {
-                    game = new Game(new Player(1, ConsoleColor.Red), new CPUPlayer(2, ConsoleColor.Blue));
+                    game = new Game(new Player(1, disc1), new CPUPlayer(2, disc2));
                 }
-                else
+                else // first player is cpu, second player is human
                 {
-                    game = new Game(new CPUPlayer(1, ConsoleColor.Red), new Player(2, ConsoleColor.Blue));
+                    game = new Game(new CPUPlayer(1, disc1), new Player(2, disc2));
                 }
             }
             else // Two players mode
-            { 
-                game = new Game(new Player(1, ConsoleColor.Red), new Player(2, ConsoleColor.Blue));
+            {
+                game = new Game(new Player(1, disc1), new Player(2, disc2));
             }
             
             if (game.TurnPlayer.Type == "CPU")
@@ -128,7 +130,7 @@ namespace ConnectFour
                 int move = game.TurnPlayer.GetMove(game.GameTable);
                 if (move >= 0)
                 {
-                    game.PlaceDisc(move, game.TurnPlayer.Color);
+                    game.PlaceDisc(move, game.TurnPlayer.Disc);
                     game.NextTurn();
                 }
             }
@@ -181,7 +183,7 @@ namespace ConnectFour
                 }
                 else if (key == ConsoleKey.Enter && !game.Over && game.TurnPlayer.Type == "Human")
                 {
-                    if (game.PlaceDisc(x, game.TurnPlayer.Color))
+                    if (game.PlaceDisc(x, game.TurnPlayer.Disc))
                     {
                         update = true;
                         game.NextTurn();
@@ -192,7 +194,7 @@ namespace ConnectFour
                          key == ConsoleKey.D7) && !game.Over && game.TurnPlayer.Type == "Human")
                 {
                     x = key - ConsoleKey.D1; // Convert key to column index (0-6)
-                    if (game.PlaceDisc(x, game.TurnPlayer.Color))
+                    if (game.PlaceDisc(x, game.TurnPlayer.Disc))
                     {
                         update = true;
                         game.NextTurn();
@@ -224,7 +226,7 @@ namespace ConnectFour
                         if (move >= 0)
                         {
                             update = true;
-                            game.PlaceDisc(move, game.TurnPlayer.Color);
+                            game.PlaceDisc(move, game.TurnPlayer.Disc);
                             game.NextTurn();
                         }
                         win = game.GameTable.CheckStatus();
