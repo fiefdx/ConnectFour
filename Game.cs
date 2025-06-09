@@ -76,7 +76,7 @@ namespace ConnectFour
 
         public void RenderWinStatus(int playerId)
         {
-            // render which player win the game or tie
+            // render which player win the game or tie into DisplayCache
         }
 
         public void RenderCursor(int cX, int cY, ConsoleColor color, int offsetX = 0, int offsetY = 0)
@@ -86,7 +86,7 @@ namespace ConnectFour
 
         public void RenderPrompts()
         {
-            // render some prompts
+            // render some prompts into console output
         }
 
         public void Render()
