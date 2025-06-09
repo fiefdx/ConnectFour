@@ -104,7 +104,7 @@ namespace ConnectFour
 
         public bool Full()
         {
-            return DiscCounter < 42;
+            return DiscCounter >= 42;
         }
 
         public void Render(Char[,] displayCache, int offsetX = 0, int offsetY = 0)

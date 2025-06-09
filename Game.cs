@@ -44,6 +44,23 @@ namespace ConnectFour
         public void UpdateWin(ConsoleColor color)
         {
             // update game win status
+            if (Player1.Disc.Color == color)
+            {
+                Over = true;
+                Winner = Player1;
+            }
+            else if (Player2.Disc.Color == color)
+            {
+                Over = true;
+                Winner = Player2;
+            }
+            else
+            {
+                if (GameTable.Full())
+                {
+                    Over = true;
+                }
+            }
         }
 
         public void RenderTable()
@@ -72,6 +89,30 @@ namespace ConnectFour
             // render some prompts
         }
 
+        public void Render()
+        {
+            // render DisplayCache into console output
+            for (int y = 0; y < DisplayCache.GetLength(1); y++)
+            {
+                for (int x = 0; x < DisplayCache.GetLength(0); x++)
+                {
+                    Char c = DisplayCache[x, y];
+                    if (c == null)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.Write(" ");
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = c.Color;
+                        Console.Write(c.C);
+                    }
+                }
+                Console.WriteLine();
+            }
+
+        }
+
         public void ClearCache()
         {
             // clear DisplayCache
@@ -89,7 +130,16 @@ namespace ConnectFour
             RenderTable();
             RenderCursor(cX, cY, TurnPlayer.Disc.Color);
             RenderPlayerInfo();
+            Render();
             RenderPrompts();
+        }
+        
+        public void Clear()
+        {
+            // reset game
+            ClearCache();
+            GameTable.Clear();
+            Over = false;
         }
     }
 
@@ -209,7 +259,7 @@ namespace ConnectFour
                     x = 0;
                     y = 0;
                     Console.Clear();
-                    game.ClearCache();
+                    game.Clear();
                     game.RenderFrame(x, y);
                     update = true;
                 }
