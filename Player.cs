@@ -8,6 +8,7 @@ namespace ConnectFour
         public string Type { get; private set; } // "Human" or "CPU"
         public int Id { get; private set; } // 1 or 2
         public Disc Disc { get; private set; } // player's disc
+        public string Thought { get; set; } // player's thought
 
         public Player(int id, Disc disc, string type = "Human")
         {
@@ -25,11 +26,9 @@ namespace ConnectFour
     public class CPUPlayer : Player
     // CPU Player class
     {
-        public string Thought { get; set; } // player's thought
-
         public CPUPlayer(int id, Disc disc) : base(id, disc, "CPU")
         {
-            Thought = "";
+
         }
 
         private int AvailableClosePlace(Table table, int x, int y)
@@ -68,6 +67,11 @@ namespace ConnectFour
             return -1;
         }
 
+        private int CheckRandomMove(Table table) // check whether has a random move
+        {
+            return -1;
+        }
+
         private int GetAIMove(Table table) // AI move
         {
             int x = -1;
@@ -85,6 +89,7 @@ namespace ConnectFour
                         Thought = "Offensive: " + (x + 1);
                         if (x == -1) // back to random move
                         {
+                            x = CheckRandomMove(table);
                             Thought = "Random: " + (x + 1);
                         }
                     }
