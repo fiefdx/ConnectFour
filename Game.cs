@@ -1,10 +1,12 @@
-using System.Drawing;
+﻿using System.Drawing;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace ConnectFour
 {
     public class Game
     {
+
         public Table GameTable { get; private set; }
         public Player Player1 { get; private set; }
         public Player Player2 { get; private set; }
@@ -20,7 +22,7 @@ namespace ConnectFour
             TurnPlayer = Player1;
             Winner = null;
             GameTable = new Table(ConsoleColor.Gray);
-            DisplayCache = new Char[57, 27];
+            DisplayCache = new Char[90, 40];
             Over = false;
         }
 
@@ -48,6 +50,7 @@ namespace ConnectFour
             {
                 Over = true;
                 Winner = Player1;
+
             }
             else if (Player2.Disc.Color == color)
             {
@@ -63,38 +66,213 @@ namespace ConnectFour
             }
         }
 
+        public void PrintTitle()
+        {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Console.ForegroundColor = ConsoleColor.Green;
+            string asciiArt = @"
+         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓    
+         ┃██                                    _     _  _     ██┃
+         ┃██                                   | |   | || |    ██┃
+         ┃██     ___ ___  _ __  _ __   ___  ___| |_  | || |_   ██┃
+         ┃██    / __/ _ \| '_ \| '_ \ / _ \/ __| __| |__   _|  ██┃ 
+         ┃██   | (_| (_) | | | | | | |  __/ (__| |_     | |    ██┃
+         ┃██    \___\___/|_| |_|_| |_|\___|\___|\__|    |_|    ██┃
+         ┃██                                                   ██┃
+         ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛";
+            Console.WriteLine(asciiArt);
+        }
+
+        public void PrintWinnerP1()
+        {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Console.ForegroundColor = ConsoleColor.Red;
+            string asciiP1 = @"
+         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓    
+         ┃██              _                         __         ██┃
+         ┃██             | |                       /_ |        ██┃
+         ┃██        _ __ | | __ _ _   _  ___ _ __   | |        ██┃
+         ┃██       | '_ \| |/ _` | | | |/ _ \ '__|  | |        ██┃
+         ┃██       | |_) | | (_| | |_| |  __/ |     | |        ██┃
+         ┃██       | .__/|_|\__,_|\__, |\___|_|     |_|        ██┃
+         ┃██       | |             __/ |                       ██┃
+         ┃██       |_|            |___/                        ██┃
+         ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛";
+            Console.WriteLine(asciiP1);
+        }
+        public void PrintWinnerP2()
+        {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Console.ForegroundColor = ConsoleColor.Blue;
+            string asciiP1 = @"
+         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓    
+         ┃██              _                         ___        ██┃
+         ┃██             | |                       |__ \       ██┃
+         ┃██        _ __ | | __ _ _   _  ___ _ __     ) |      ██┃
+         ┃██       | '_ \| |/ _` | | | |/ _ \ '__|   / /       ██┃
+         ┃██       | |_) | | (_| | |_| |  __/ |     / /_       ██┃
+         ┃██       | .__/|_|\__,_|\__, |\___|_|    |____|      ██┃
+         ┃██       | |             __/ |                       ██┃
+         ┃██       |_|            |___/                        ██┃
+         ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛";
+            Console.WriteLine(asciiP1);
+        }
+
+        public void PrintTie()
+        {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            string asciiP1 = @"
+         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ 
+         ┃██                                                   ██┃
+         ┃██               _______ _____ ______                ██┃
+         ┃██              |__   __|_   _|  ____|               ██┃
+         ┃██                 | |    | | | |__                  ██┃
+         ┃██                 | |    | | |  __|                 ██┃
+         ┃██                 | |   _| |_| |____                ██┃
+         ┃██                 |_|  |_____|______|               ██┃
+         ┃██                                                   ██┃
+         ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛";
+            Console.WriteLine(asciiP1);
+        }
+
         public void RenderTable()
         {
             // render table into DisplayCache
-            GameTable.Render(DisplayCache, 6, 0);
+            GameTable.Render(DisplayCache, 9, 0);
         }
 
         public void RenderPlayerInfo()
         {
             // render player info into DisplayCache
+            for (int i = 0; i < Player1.Type.Length; i++)
+            {
+                DisplayCache[i + 2 + (5 - Player1.Type.Length) / 2, 9] = new Char(Player1.Type[i].ToString(), Player1.Disc.Color);
+            }
+            for (int i = 0; i < Player2.Type.Length; i++)
+            {
+                DisplayCache[i + 69 + (5 - Player2.Type.Length) / 2, 9] = new Char(Player2.Type[i].ToString(), Player2.Disc.Color);
+            }
+            Player1.Disc.Render(DisplayCache, 0, 10);
+            Player2.Disc.Render(DisplayCache, 67, 10);
+            int offsetX = 0;
+            if (TurnPlayer.Id == 2)
+            {
+                offsetX = 67;
+            }
+            for (int y = 0; y < 5; y++)
+            {
+                for (int x = 0; x < 9; x++)
+                {
+                    if (y == 0 || y == 4)
+                    {
+                        if (x > 0 && x < 8)
+                        {
+                            DisplayCache[x + offsetX, y + 10] = new Char("━", ConsoleColor.Green);
+                        }
+                    }
+                    else if (x == 0 || x == 8)
+                    {
+                        DisplayCache[x + offsetX, y + 10] = new Char("┃", ConsoleColor.Green);
+                    }
+                }
+            }
         }
 
-        public void RenderWinStatus(int playerId)
+        public void RenderWinStatus()
         {
-            // render which player win the game or tie into DisplayCache
+            // render which player win the game or tie
+            if (Over)
+            {
+                if (Winner == null)
+                {
+                    int offsetX1 = 3, offsetX2 = 70;
+                    string tie = "TIE";
+
+                    for (int x = 0; x < 3; x++)
+                    {
+                        DisplayCache[x + offsetX1, 15] = new Char(tie[x].ToString(), ConsoleColor.Green);
+                        DisplayCache[x + offsetX2, 15] = new Char(tie[x].ToString(), ConsoleColor.Green);
+                    }
+                }
+                else
+                {
+                    int offsetX = 3;
+                    string win = "WIN";
+                    if (Winner.Id == 2)
+                    {
+                        offsetX = 70;
+                    }
+                    for (int x = 0; x < 3; x++)
+                    {
+                        DisplayCache[x + offsetX, 15] = new Char(win[x].ToString(), ConsoleColor.Green);
+                    }
+                }
+            }
         }
 
-        public void RenderCursor(int cX, int cY, ConsoleColor color, int offsetX = 0, int offsetY = 0)
+        public void RenderCursor(int cX, int cY, ConsoleColor color, int offsetX = 9, int offsetY = 0)
         {
+
             // render a cursor into DisplayCache
+            for (int y = 0; y < 5; y++)
+            {
+                for (int x = 0; x < 9; x++)
+                {
+                    if (y == 0 || y == 4)
+                    {
+                        if (x > 0 && x < 8)
+                        {
+                            DisplayCache[cX * 8 + x + offsetX, cY * 4 + y + offsetY] = new Char("━", color);
+                        }
+                    }
+                    else if (x == 0 || x == 8)
+                    {
+                        DisplayCache[cX * 8 + x + offsetX, cY * 4 + y + offsetY] = new Char("┃", color);
+                    }
+                }
+            }
         }
 
         public void RenderPrompts()
         {
-            // render some prompts into console output
+            // render some prompts
+            if (Over)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine(@"
+         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ 
+         ┃██      Press 'R' to restart or 'Esc' to exit.       ██┃
+         ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.DarkBlue;
+                Console.WriteLine(@"
+         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+         ┃██   Use Arrow keys to move, Enter to place a disc,  ██┃        
+         ┃██    or press Number keys[1-7] to place a disc,     ██┃    
+         ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫ 
+         ┃██       Press 'R' to restart or 'Esc' to exit.      ██┃
+         ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+            }
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            if (Player1.Type == "CPU")
+            {
+                Console.WriteLine($"           Step({GameTable.DiscCounter}): CPU[{Player1.Thought}]");
+            }
+            else if (Player2.Type == "CPU")
+            {
+                Console.WriteLine($"           Step({GameTable.DiscCounter}): CPU[{Player2.Thought}]");
+            }
         }
 
         public void Render()
         {
-            // render DisplayCache into console output
-            for (int y = 0; y < DisplayCache.GetLength(1); y++)
+            // render display cache
+            for (int y = 0; y < 27; y++)
             {
-                for (int x = 0; x < DisplayCache.GetLength(0); x++)
+                for (int x = 0; x < 76; x++)
                 {
                     Char c = DisplayCache[x, y];
                     if (c == null)
@@ -110,7 +288,6 @@ namespace ConnectFour
                 }
                 Console.WriteLine();
             }
-
         }
 
         public void ClearCache()
@@ -125,21 +302,50 @@ namespace ConnectFour
             }
         }
 
+        public bool isTie()
+        {
+            return Over && Winner == null;
+        }
+
         public void RenderFrame(int cX, int cY)
         {
+            if (isTie())
+            {
+                PrintTie();
+            }
+
+            else if (Winner == null)
+            {
+                PrintTitle();
+            }
+            
+            else
+            {
+                if (Winner.Id == 2)
+                {
+                    PrintWinnerP2();
+                }
+                else
+                {
+                    PrintWinnerP1();
+                }
+            }
+            
             RenderTable();
             RenderCursor(cX, cY, TurnPlayer.Disc.Color);
             RenderPlayerInfo();
             Render();
             RenderPrompts();
         }
-        
+
         public void Clear()
         {
             // reset game
             ClearCache();
             GameTable.Clear();
             Over = false;
+            Winner = null;
+
         }
     }
 
@@ -155,8 +361,20 @@ namespace ConnectFour
             Console.WriteLine("Click '1' for Single player mode, other keys for Two players mode.");
 
             ConsoleKeyInfo keyInfo = Console.ReadKey(true); // keyboard input
-            Disc disc1 = new Disc(0, 0, new string[] { " XXXXX ", "XXXXXXX", " XXXXX " }, ConsoleColor.Red); // disc for first player
-            Disc disc2 = new Disc(0, 0, new string[] { " OOOOO ", "OOOOOOO", " OOOOO " }, ConsoleColor.Blue); // disc for second player
+            Disc disc1 = new Disc(0, 0, new string[] 
+            {
+                "██XXX██",
+                "XX███XX",
+                "██XXX██" }
+            , ConsoleColor.Red); // disc for first player
+            Disc disc2 = new Disc(0, 0, new string[] 
+            {
+                " █████ ",
+                "██OOO██",
+                " █████ " }
+            , ConsoleColor.Blue); // disc for second player
+            
+
             if (keyInfo.Key == ConsoleKey.D1) // Single player mode
             {
                 Random random = new Random();
@@ -173,7 +391,7 @@ namespace ConnectFour
             {
                 game = new Game(new Player(1, disc1), new Player(2, disc2));
             }
-            
+
             if (game.TurnPlayer.Type == "CPU")
             {
                 // If it's CPU's turn, let it make a move
@@ -254,7 +472,7 @@ namespace ConnectFour
                 {
                     break;
                 }
-                else if (key == ConsoleKey.R && game.Over) // restart a new game
+                else if (key == ConsoleKey.R) // restart a new game
                 {
                     x = 0;
                     y = 0;
