@@ -1,4 +1,4 @@
-namespace ConnectFour
+﻿namespace ConnectFour
 {
     public class Disc
     {
@@ -21,11 +21,41 @@ namespace ConnectFour
             Color = color;
         }
 
-        public void Render(Char[,] displayCache, int offsetX = 0, int offsetY = 0)
+        public void Render(Char[,] displayCache, int offsetX = 0, int offsetY = 0, bool step = false)
         {
-            // render disc's Symbol into displayCache with offsetX and offsetY
-            
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    if (Color == ConsoleColor.Red)
+                    {
+                        displayCache[X * 8 + 1 + x + offsetX, Y * 4 + 1 + y + offsetY] = new Char(Symbol[y][x].ToString(), Color);
+                    }
+                    else
+                    {
+                        displayCache[X * 8 + 1 + x + offsetX, Y * 4 + 1 + y + offsetY] = new Char(Symbol[y][x].ToString(), Color);
+                    }
+                    if (step && y == 1)
+                    {
+                        if (x == 2)
+                        {
+                            displayCache[X * 8 + 1 + x + offsetX, Y * 4 + 1 + y + offsetY] = new Char((N / 10).ToString(), ConsoleColor.DarkGreen);
+                        }
+                        else if (x == 3)
+                        {
+                            displayCache[X * 8 + 1 + x + offsetX, Y * 4 + 1 + y + offsetY] = new Char(" ", ConsoleColor.DarkGreen);
+                        }
+                        else if (x == 4)
+                        {
+                            displayCache[X * 8 + 1 + x + offsetX, Y * 4 + 1 + y + offsetY] = new Char((N % 10).ToString(), ConsoleColor.DarkGreen);
+                        }
+                    }
+                }
+            }
         }
+
 
         public override string ToString()
         {
