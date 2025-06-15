@@ -1,7 +1,9 @@
-namespace ConnectFour
+﻿namespace ConnectFour
 {
+
     public class Table
     {
+
         public static int Width { get; } = 7;
         public static int Height { get; } = 6;
 
@@ -109,8 +111,92 @@ namespace ConnectFour
 
         public void Render(Char[,] displayCache, int offsetX = 0, int offsetY = 0)
         {
-            // render Table's Discs into displayCache
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            
+
+            for (int y = 0; y < 27; y++)
+            {
+                if (y == 0 || y == 26)
+                {
+                    for (int x = 0; x < 57; x++)
+                    {
+                        if (x == 0 || x == 56)
+                        {
+                            if (y == 0)
+                            {
+                                displayCache[x + offsetX, y + offsetY] = new Char(x == 0 ? "┏" : "┓", Color);
+                            }
+                            else
+                            {
+                                displayCache[x + offsetX, y + offsetY] = new Char(x == 0 ? "┗" : "┛", Color);
+                            }
+                        }
+                        else if (x % 8 == 0)
+                        {
+                            displayCache[x + offsetX, y + offsetY] = new Char(y == 0 ? "┳" : "┻", Color);
+                        }
+                        else
+                        {
+                            displayCache[x + offsetX, y + offsetY] = new Char("━", Color);
+                        }
+                    }
+                }
+                else if (y % 4 == 0)
+                {
+                    for (int x = 0; x < 57; x++)
+                    {
+                        if (x % 8 == 0)
+                        {
+                            if (x == 0)
+                            {
+                                displayCache[x + offsetX, y + offsetY] = new Char("┣", Color);
+                            }
+                            else if (x == 56)
+                            {
+                                displayCache[x + offsetX, y + offsetY] = new Char("┫", Color);
+                            }
+                            else
+                            {
+                                displayCache[x + offsetX, y + offsetY] = new Char("╋", Color);
+                            }
+                        }
+                        else
+                        {
+                            displayCache[x + offsetX, y + offsetY] = new Char("━", Color);
+                        }
+                    }
+                }
+                else
+                {
+                    for (int x = 0; x < 57; x++)
+                    {
+                        if (x % 8 == 0)
+                        {
+                            displayCache[x + offsetX, y + offsetY] = new Char("┃", Color);
+                        }
+                        else
+                        {
+                            displayCache[x + offsetX, y + offsetY] = new Char(" ", Color);
+                        }
+                    }
+                }
+            }
+            for (int i = 1; i < 8; i++)
+            {
+                displayCache[i * 8 - 4 + offsetX, 25 + offsetY] = new Char(i.ToString(), ConsoleColor.DarkRed);
+            }
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    if (Discs[x, y] != null)
+                    {
+                        Discs[x, y].Render(displayCache, offsetX, offsetY, true);
+                    }
+                }
+            }
         }
+ 
 
         public void Clear()
         {
