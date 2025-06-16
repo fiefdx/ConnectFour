@@ -52,6 +52,29 @@ namespace ConnectFour
             return -1; // No available close place found
         }
 
+        private int SumSubArray(int[,] a, int d) // sum the values in a subarray
+        {
+            int sum = 0;
+            for (int x = 0; x < Table.Width; x++)
+            {
+                sum += a[d, x];
+            }
+            return sum;
+        }
+
+        private int MaxSubArray(int[,] a, int d) // get the max value in a subarray
+        {
+            int max = -1;
+            for (int x = 0; x < Table.Width; x++)
+            {
+                if (a[d, x] > max)
+                {
+                    max = a[d, x];
+                }
+            }
+            return max;
+        }
+
         private int CheckWinMove(Table table) // check whether has a move for win
         {
             return -1;
