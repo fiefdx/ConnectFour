@@ -173,7 +173,160 @@ namespace ConnectFour
 
         private int CheckOffensiveMove(Table table) // check whether has a move for offensive
         {
-            return -1;
+            ConsoleColor opponentColor = Id == 1 ? ConsoleColor.Blue : ConsoleColor.Red;
+            int[] moves1 = table.CheckOffensiveMove12(Disc.Color);
+            int[] moves2 = table.CheckOffensiveMove23(Disc.Color);
+            int[] moves3 = table.CheckOffensiveMove34(Disc.Color);
+            int[] form3 = table.CheckFormMove3(Disc.Color);
+            int[,] formLock = table.CheckFormLockMove(Disc.Color);
+            int[] lockMoves = table.CheckLockColumnStatus(Disc.Color, Id);
+            int[] opponentMoves3 = table.CheckOffensiveMove34(opponentColor);
+            int[] opponentMoves2 = table.CheckOffensiveMove23(opponentColor);
+            int[] badMove = { 0, 0, 0, 0, 0, 0, 0 };
+            int[] goodMove2 = { 0, 0, 0, 0, 0, 0, 0 };
+            int[] goodMove1 = { 0, 0, 0, 0, 0, 0, 0 };
+            for (int x = 0; x < Table.Width; x++)
+            {
+                if (form3[x] > 0)
+                {
+                    int y = table.AvailablePlaceY(x);
+                    if (y >= 0)
+                    {
+                        Table t = new Table();
+                        t.CopyFrom(table);
+                        t.PlaceDisc(x, Disc);
+                        int[] afterOpponentMoves3 = t.CheckOffensiveMove34(opponentColor);
+                        int[] afterOpponentMoves2 = t.CheckOffensiveMove23(opponentColor);
+                        int[] afterLockMoves = t.CheckLockColumnStatus(Disc.Color, Id);
+                        if (afterOpponentMoves3.Sum() <= opponentMoves3.Sum() && afterOpponentMoves2.Sum() <= opponentMoves2.Sum() && afterLockMoves.Sum() >= lockMoves.Sum())
+                        {
+                            return x;
+                        }
+                    }
+                }
+            }
+            int maxY = MaxSubArray(formLock, 1);
+            for (int y = maxY; y >= 0; y--)
+            {
+                for (int x = 0; x < Table.Width; x++)
+                {
+                    if (formLock[0, x] > 0 && formLock[1, x] == y)
+                    {
+                        int yP = table.AvailablePlaceY(x);
+                        if (yP >= 0)
+                        {
+                            Table t = new Table();
+                            t.CopyFrom(table);
+                            t.PlaceDisc(x, Disc);
+                            int[] afterOpponentMoves3 = t.CheckOffensiveMove34(opponentColor);
+                            int[] afterOpponentMoves2 = t.CheckOffensiveMove23(opponentColor);
+                            int[] afterLockMoves = t.CheckLockColumnStatus(Disc.Color, Id);
+                            if (afterOpponentMoves3.Sum() <= opponentMoves3.Sum() && afterOpponentMoves2.Sum() <= opponentMoves2.Sum() && afterLockMoves.Sum() >= lockMoves.Sum())
+                            {
+                                return x;
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (int x = 0; x < Table.Width; x++)
+            {
+                if (moves2[x] > 0)
+                {
+                    int y = table.AvailablePlaceY(x);
+                    if (y >= 0)
+                    {
+                        Table t = new Table();
+                        t.CopyFrom(table);
+                        t.PlaceDisc(x, Disc);
+                        int[] afterOpponentMoves3 = t.CheckOffensiveMove34(opponentColor);
+                        int[] afterOpponentMoves2 = t.CheckOffensiveMove23(opponentColor);
+                        int[] afterLockMoves = t.CheckLockColumnStatus(Disc.Color, Id);
+                        if (afterOpponentMoves3.Sum() > opponentMoves3.Sum() || afterOpponentMoves2.Sum() > opponentMoves2.Sum() || afterLockMoves.Sum() < lockMoves.Sum())
+                        {
+                            badMove[x]++;
+                        }
+                        else
+                        {
+                            goodMove2[x] = moves2[x];
+                        }
+                    }
+                }
+            }
+
+            for (int x = 0; x < Table.Width; x++)
+            {
+                if (moves1[x] > 0)
+                {
+                    int y = table.AvailablePlaceY(x);
+                    if (y >= 0)
+                    {
+                        Table t = new Table();
+                        t.CopyFrom(table);
+                        t.PlaceDisc(x, Disc);
+                        int[] afterOpponentMoves3 = t.CheckOffensiveMove34(opponentColor);
+                        int[] afterOpponentMoves2 = t.CheckOffensiveMove23(opponentColor);
+                        int[] afterLockMoves = t.CheckLockColumnStatus(Disc.Color, Id);
+                        if (afterOpponentMoves3.Sum() > opponentMoves3.Sum() || afterOpponentMoves2.Sum() > opponentMoves2.Sum() || afterLockMoves.Sum() < lockMoves.Sum())
+                        {
+                            badMove[x]++;
+                        }
+                        else
+                        {
+                            goodMove1[x] = moves1[x];
+                        }
+                    }
+                }
+            }
+            int lowestY = 0, bestX = -1;
+            for (int x = 0; x < Table.Width; x++) // find prefered lock column
+            {
+                if (goodMove1[x] > 0 || goodMove2[x] > 0)
+                {
+                    int y = table.AvailablePlaceY(x);
+                    if (y > lowestY && y % 2 == (Id % 2))
+                    {
+                        lowestY = y;
+                        bestX = x;
+                    }
+                }
+            }
+            if (bestX >= 0)
+            {
+                return bestX;
+            }
+            int bestWin = 0;
+            for (int x = 0; x < Table.Width; x++)
+            {
+                if (goodMove2[x] > 0)
+                {
+                    int y = table.AvailablePlaceY(x);
+                    if (goodMove2[x] > bestWin)
+                    {
+                        bestWin = goodMove2[x];
+                        bestX = x;
+                    }
+                }
+            }
+            if (bestX >= 0)
+            {
+                return bestX;
+            }
+            bestWin = 0;
+            for (int x = 0; x < Table.Width; x++)
+            {
+                if (goodMove1[x] > 0)
+                {
+                    int y = table.AvailablePlaceY(x);
+                    if (goodMove1[x] > bestWin)
+                    {
+                        bestWin = goodMove1[x];
+                        bestX = x;
+                    }
+                }
+            }
+            return bestX;
         }
 
         private int CheckRandomMove(Table table) // check whether has a random move
