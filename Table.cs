@@ -56,6 +56,92 @@
             return -1;
         }
 
+        public int[] CheckOffensiveMove12(ConsoleColor color)  // from 1 to 2 in line
+        {
+            int[] moves = { 0, 0, 0, 0, 0, 0, 0 };
+            return moves;
+        }
+
+        public int[] CheckOffensiveMove23(ConsoleColor color) // from 2 to 3 in line
+        {
+            int[] moves = { 0, 0, 0, 0, 0, 0, 0 };
+            return moves;
+        }
+
+        public int[] CheckOffensiveMove34(ConsoleColor color) // 3 to 4 in line places
+        {
+            int[] moves = { 0, 0, 0, 0, 0, 0, 0 };
+            return moves;
+        }
+
+        public int[] CheckFormMove3(ConsoleColor color) // 2 to connect 3 with both sides opening
+        {
+            int[] moves = { 0, 0, 0, 0, 0, 0, 0 };
+            for (int y = 0; y < 6; y++) // check horizontal
+            {
+                for (int x = 0; x < 3; x++)
+                {
+                    if (Discs[x, y] == null && Discs[x + 1, y] == null && Discs[x + 2, y] != null && Discs[x + 3, y] != null && Discs[x + 4, y] == null &&
+                        AvailablePlaceY(x) == y && AvailablePlaceY(x + 1) == y && Discs[x + 2, y].Color == color && Discs[x + 3, y].Color == color && AvailablePlaceY(x + 4) == y)
+                    {
+                        moves[x + 1]++;
+                    }
+                    if (Discs[x, y] == null && Discs[x + 1, y] != null && Discs[x + 2, y] == null && Discs[x + 3, y] != null && Discs[x + 4, y] == null &&
+                        AvailablePlaceY(x) == y && Discs[x + 1, y].Color == color && AvailablePlaceY(x + 2) == y && Discs[x + 3, y].Color == color && AvailablePlaceY(x + 4) == y)
+                    {
+                        moves[x + 2]++;
+                    }
+                    if (Discs[x, y] == null && Discs[x + 1, y] != null && Discs[x + 2, y] != null && Discs[x + 3, y] == null && Discs[x + 4, y] == null &&
+                        AvailablePlaceY(x) == y && Discs[x + 1, y].Color == color && Discs[x + 2, y].Color == color && AvailablePlaceY(x + 3) == y && AvailablePlaceY(x + 4) == y)
+                    {
+                        moves[x + 3]++;
+                    }
+                }
+            }
+
+            for (int y = 0; y < 2; y++) // check diagonal
+            {
+                for (int x = 0; x < 3; x++)
+                {
+                    if (Discs[x, y] == null && Discs[x + 1, y + 1] == null && Discs[x + 2, y + 2] != null && Discs[x + 3, y + 3] != null && Discs[x + 4, y + 4] == null &&
+                        AvailablePlaceY(x) == y && AvailablePlaceY(x + 1) == y + 1 && Discs[x + 2, y + 2].Color == color && Discs[x + 3, y + 3].Color == color && AvailablePlaceY(x + 4) == y + 4)
+                    {
+                        moves[x + 1]++;
+                    }
+                    if (Discs[x, y] == null && Discs[x + 1, y + 1] != null && Discs[x + 2, y + 2] == null && Discs[x + 3, y + 3] != null && Discs[x + 4, y + 4] == null &&
+                        AvailablePlaceY(x) == y && Discs[x + 1, y + 1].Color == color && AvailablePlaceY(x + 2) == y + 2 && Discs[x + 3, y + 3].Color == color && AvailablePlaceY(x + 4) == y + 4)
+                    {
+                        moves[x + 2]++;
+                    }
+                    if (Discs[x, y] == null && Discs[x + 1, y + 1] != null && Discs[x + 2, y + 2] != null && Discs[x + 3, y + 3] == null && Discs[x + 4, y + 4] == null &&
+                        AvailablePlaceY(x) == y && Discs[x + 1, y + 1].Color == color && Discs[x + 2, y + 2].Color == color && AvailablePlaceY(x + 3) == y + 3 && AvailablePlaceY(x + 4) == y + 4)
+                    {
+                        moves[x + 3]++;
+                    }
+                }
+
+                for (int x = 4; x < 7; x++)
+                {
+                    if (Discs[x, y] == null && Discs[x - 1, y + 1] == null && Discs[x - 2, y + 2] != null && Discs[x - 3, y + 3] != null && Discs[x - 4, y + 4] == null &&
+                        AvailablePlaceY(x) == y && AvailablePlaceY(x - 1) == y + 1 && Discs[x - 2, y + 2].Color == color && Discs[x - 3, y + 3].Color == color && AvailablePlaceY(x - 4) == y + 4)
+                    {
+                        moves[x - 1]++;
+                    }
+                    if (Discs[x, y] == null && Discs[x - 1, y + 1] != null && Discs[x - 2, y + 2] == null && Discs[x - 3, y + 3] != null && Discs[x - 4, y + 4] == null &&
+                        AvailablePlaceY(x) == y && Discs[x - 1, y + 1].Color == color && AvailablePlaceY(x - 2) == y + 2 && Discs[x - 3, y + 3].Color == color && AvailablePlaceY(x - 4) == y + 4)
+                    {
+                        moves[x - 2]++;
+                    }
+                    if (Discs[x, y] == null && Discs[x - 1, y + 1] != null && Discs[x - 2, y + 2] != null && Discs[x - 3, y + 3] == null && Discs[x - 4, y + 4] == null &&
+                        AvailablePlaceY(x) == y && Discs[x - 1, y + 1].Color == color && Discs[x - 2, y + 2].Color == color && AvailablePlaceY(x - 3) == y + 3 && AvailablePlaceY(x - 4) == y + 4)
+                    {
+                        moves[x - 3]++;
+                    }
+                }
+            }
+            return moves;
+        }
+
         public ConsoleColor CheckStatus() // check horizontal, vertical, and diagonal connections, return winner's disc color
         {
             for (int y = 0; y < 6; y++) // check horizontal
@@ -112,8 +198,6 @@
         public void Render(Char[,] displayCache, int offsetX = 0, int offsetY = 0)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-            
-
             for (int y = 0; y < 27; y++)
             {
                 if (y == 0 || y == 26)
