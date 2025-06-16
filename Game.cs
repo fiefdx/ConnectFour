@@ -66,6 +66,28 @@ namespace ConnectFour
             }
         }
 
+        public void PrintStartMenu()
+        {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            string Menu = @"
+         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+         ┃███████  █████  ██   ██ ██   ██ ██▀▀▀▀▀ ███████ ███████┃ 
+         ┃██      ██   ██ ████ ██ ████ ██ ████    ██        ███  ┃  
+         ┃███████  █████  ██  ███ ██  ███ ██▄▄▄▄▄ ███████   ███  ┃ 
+         ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+         ┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┓
+          ██░░░██ ░█████░ ██░░░██┃ ██  ██┃██░░░██  █████  ██░░░██ 
+          ░░███░░ ██░░░██ ░░███░░┃██   ██┃░░███░░ ██░░░██ ░░███░░ 
+          ██░░░██ ░█████░ ██░░░██┃▀▀▀▀▀██┃██░░░██  █████  ██░░░██
+         ┗━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━┛
+         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+         ┃          Click '1' for Single player mode,            ┃
+         ┃          other keys for Two players mode.             ┃
+         ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛";
+            Console.WriteLine(Menu);
+        }
+
         public void PrintTitle()
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
@@ -356,22 +378,41 @@ namespace ConnectFour
             int x = 0, y = 0; // cursor x, y
             Game game; // game variable
             Console.Clear(); // clear console
-            Console.ForegroundColor = ConsoleColor.DarkBlue; // console output color
-            Console.WriteLine("Welcome to Connect Four!");
-            Console.WriteLine("Click '1' for Single player mode, other keys for Two players mode.");
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            string Menu = @"
+         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+         ┃███████  █████  ██   ██ ██   ██ ██▀▀▀▀▀ ███████ ███████┃ 
+         ┃██      ██   ██ ████ ██ ████ ██ ██▄▄    ██        ███  ┃  
+         ┃██      ██   ██ ████ ██ ████ ██ ██▀▀    ██        ███  ┃  
+         ┃███████  █████  ██  ███ ██  ███ ██▄▄▄▄▄ ███████   ███  ┃ 
+         ┣━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┫
+         ┃██░░░██┃░█████░┃██░░░██┃ ██  ██┃██░░░██┃░█████░┃██░░░██┃
+         ┃░░███░░┃██░░░██┃░░███░░┃██   ██┃░░███░░┃██░░░██┃░░███░░┃
+         ┃██░░░██┃░█████░┃██░░░██┃██▄▄▄██┃██░░░██┃░█████░┃██░░░██┃
+         ┣━━━━━━━┻━━━━━━━┻━━━━━━━┃     ██┃━━━━━━━┻━━━━━━━┻━━━━━━━┫
+         ┃░░░░░░░░░░░░░░░░░░░░░░░┗━━━━━━━┛░░░░░░░░░░░░░░░░░░░░░░░┃
+         ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+         ┃          Click '1' for Single player mode,            ┃
+         ┃          other keys for Two players mode.             ┃
+         ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛";
+            Console.WriteLine(Menu);
+        
+       
 
-            ConsoleKeyInfo keyInfo = Console.ReadKey(true); // keyboard input
+
+        ConsoleKeyInfo keyInfo = Console.ReadKey(true); // keyboard input
             Disc disc1 = new Disc(0, 0, new string[] 
             {
-                "██XXX██",
-                "XX███XX",
-                "██XXX██" }
+                "██░░░██",
+                "░░███░░",
+                "██░░░██" }
             , ConsoleColor.Red); // disc for first player
             Disc disc2 = new Disc(0, 0, new string[] 
             {
-                " █████ ",
-                "██OOO██",
-                " █████ " }
+                "░█████░",
+                "██░░░██",
+                "░█████░" }
             , ConsoleColor.Blue); // disc for second player
             
 
