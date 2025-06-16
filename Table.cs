@@ -11,7 +11,7 @@
         private Disc[,] Discs { get; set; }
         public int DiscCounter { get; private set; }
 
-        public Table(ConsoleColor color)
+        public Table(ConsoleColor color = ConsoleColor.Gray)
         {
             Discs = new Disc[Width, Height];
             Color = color;

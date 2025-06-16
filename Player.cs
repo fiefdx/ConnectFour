@@ -108,7 +108,61 @@ namespace ConnectFour
 
         private int CheckRandomMove(Table table) // check whether has a random move
         {
-            return -1;
+            ConsoleColor opponentColor = Id == 1 ? ConsoleColor.Blue : ConsoleColor.Red; // opponent's color
+            int x = -1;
+            int[] opponentMoves3 = table.CheckOffensiveMove34(opponentColor);
+            int[] moves2 = table.CheckOffensiveMove23(Disc.Color);
+            int[] moves3 = table.CheckOffensiveMove34(Disc.Color);
+            int[] lockMoves = table.CheckLockColumnStatus(Disc.Color, Id);
+            int[,] formLock = table.CheckFormLockMove(Disc.Color);
+            int[] badMove = { 0, 0, 0, 0, 0, 0, 0 };
+            int[] goodMove = { 0, 0, 0, 0, 0, 0, 0 };
+            for (int rx = 0; rx < 7; rx++)
+            {
+                int y = table.AvailablePlaceY(rx);
+                if (y >= 0)
+                {
+                    Table t = new Table();
+                    t.CopyFrom(table);
+                    t.PlaceDisc(rx, Disc);
+                    int[] afterOpponentMoves3 = t.CheckOffensiveMove34(opponentColor);
+                    int[] afterMoves2 = t.CheckOffensiveMove23(Disc.Color);
+                    int[] afterMoves3 = t.CheckOffensiveMove34(Disc.Color);
+                    int[] afterLockMoves = t.CheckLockColumnStatus(Disc.Color, Id);
+                    int[,] afterFormLock = t.CheckFormLockMove(Disc.Color);
+                    if (afterOpponentMoves3.Sum() > opponentMoves3.Sum())
+                    {
+                        badMove[rx] += 5;
+                    }
+                    else if (afterLockMoves.Sum() < lockMoves.Sum())
+                    {
+                        badMove[rx] += 2;
+                    }
+                    else if (SumSubArray(afterFormLock, 0) > SumSubArray(formLock, 0))
+                    {
+                        badMove[rx]++;
+                    }
+                    else
+                    {
+                        goodMove[rx] += afterMoves2.Sum() - moves2.Sum() + (afterMoves3.Sum() - moves3.Sum()) * 5;
+                    }
+                }
+                else
+                {
+                    badMove[rx] += 10;
+                }
+            }
+            int maxV = goodMove.Max();
+            if (maxV > 0)
+            {
+                x = Array.IndexOf(goodMove, maxV);
+            }
+            else
+            {
+                int minV = badMove.Min();
+                x = Array.IndexOf(badMove, minV);
+            }
+            return x;
         }
 
         private int GetAIMove(Table table) // AI move
