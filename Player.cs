@@ -77,7 +77,23 @@ namespace ConnectFour
 
         private int CheckWinMove(Table table) // check whether has a move for win
         {
-            return -1;
+            int[] moves2 = table.CheckOffensiveMove23(Disc.Color);
+            int[] moves3 = table.CheckOffensiveMove34(Disc.Color);
+            for (int x = 0; x < Table.Width; x++)
+            {
+                if (moves2[x] > 0 && moves3[x] > 0)
+                {
+                    return x;
+                }
+            }
+            for (int x = 0; x < Table.Width; x++)
+            {
+                if (moves3[x] > 0)
+                {
+                    return x;
+                }
+            }
+            return -1; // No win move found
         }
 
         private int CheckDefensiveMove(Table table) // check whether has a move for defensive
