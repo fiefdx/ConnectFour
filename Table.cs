@@ -142,6 +142,388 @@
             return moves;
         }
 
+        public int[,] CheckFormLockMove(ConsoleColor color) // potential lock column places
+        {
+            int[,] moves = new int[2, 7] { { 0, 0, 0, 0, 0, 0, 0 }, { -1, -1, -1, -1, -1, -1, -1 } };
+            for (int y = 0; y < 6; y++)
+            {
+                for (int x = 0; x < 4; x++)
+                {
+                    if (Discs[x + 3, y] == null && AvailablePlaceY(x + 3) > y)
+                    {
+                        if (Discs[x, y] == null && Discs[x + 1, y] != null && Discs[x + 2, y] != null &&
+                            AvailablePlaceY(x) == y && Discs[x + 1, y].Color == color && Discs[x + 2, y].Color == color)
+                        {
+                            moves[0, x]++;
+                            if (y > moves[1, x])
+                            {
+                                moves[1, x] = y;
+                            }
+                        }
+                        if (Discs[x, y] != null && Discs[x + 1, y] == null && Discs[x + 2, y] != null &&
+                            Discs[x, y].Color == color && AvailablePlaceY(x + 1) == y && Discs[x + 2, y].Color == color)
+                        {
+                            moves[0, x + 1]++;
+                            if (y > moves[1, x + 1])
+                            {
+                                moves[1, x + 1] = y;
+                            }
+                        }
+                        if (Discs[x, y] != null && Discs[x + 1, y] != null && Discs[x + 2, y] == null &&
+                            Discs[x, y].Color == color && Discs[x + 1, y].Color == color && AvailablePlaceY(x + 2) == y)
+                        {
+                            moves[0, x + 2]++;
+                            if (y > moves[1, x + 2])
+                            {
+                                moves[1, x + 2] = y;
+                            }
+                        }
+                    }
+                    else if (Discs[x + 2, y] == null && AvailablePlaceY(x + 2) > y)
+                    {
+                        if (Discs[x, y] == null && Discs[x + 1, y] != null && Discs[x + 3, y] != null &&
+                            AvailablePlaceY(x) == y && Discs[x + 1, y].Color == color && Discs[x + 3, y].Color == color)
+                        {
+                            moves[0, x]++;
+                            if (y > moves[1, x])
+                            {
+                                moves[1, x] = y;
+                            }
+                        }
+                        if (Discs[x, y] != null && Discs[x + 1, y] == null && Discs[x + 3, y] != null &&
+                            Discs[x, y].Color == color && AvailablePlaceY(x + 1) == y && Discs[x + 3, y].Color == color)
+                        {
+                            moves[0, x + 1]++;
+                            if (y > moves[1, x + 1])
+                            {
+                                moves[1, x + 1] = y;
+                            }
+                        }
+                        if (Discs[x, y] != null && Discs[x + 1, y] != null && Discs[x + 3, y] == null &&
+                            Discs[x, y].Color == color && Discs[x + 1, y].Color == color && AvailablePlaceY(x + 3) == y)
+                        {
+                            moves[0, x + 3]++;
+                            if (y > moves[1, x + 3])
+                            {
+                                moves[1, x + 3] = y;
+                            }
+                        }
+                    }
+                    else if (Discs[x + 1, y] == null && AvailablePlaceY(x + 1) > y)
+                    {
+                        if (Discs[x, y] == null && Discs[x + 2, y] != null && Discs[x + 3, y] != null &&
+                            AvailablePlaceY(x) == y && Discs[x + 2, y].Color == color && Discs[x + 3, y].Color == color)
+                        {
+                            moves[0, x]++;
+                            if (y > moves[1, x])
+                            {
+                                moves[1, x] = y;
+                            }
+                        }
+                        if (Discs[x, y] != null && Discs[x + 2, y] == null && Discs[x + 3, y] != null &&
+                            Discs[x, y].Color == color && AvailablePlaceY(x + 2) == y && Discs[x + 3, y].Color == color)
+                        {
+                            moves[0, x + 2]++;
+                            if (y > moves[1, x + 2])
+                            {
+                                moves[1, x + 2] = y;
+                            }
+                        }
+                        if (Discs[x, y] != null && Discs[x + 2, y] != null && Discs[x + 3, y] == null &&
+                            Discs[x, y].Color == color && Discs[x + 2, y].Color == color && AvailablePlaceY(x + 3) == y)
+                        {
+                            moves[0, x + 3]++;
+                            if (y > moves[1, x + 3])
+                            {
+                                moves[1, x + 3] = y;
+                            }
+                        }
+                    }
+                    else if (Discs[x, y] == null && AvailablePlaceY(x) > y)
+                    {
+                        if (Discs[x + 3, y] == null && Discs[x + 1, y] != null && Discs[x + 2, y] != null &&
+                            AvailablePlaceY(x + 3) == y && Discs[x + 1, y].Color == color && Discs[x + 2, y].Color == color)
+                        {
+                            moves[0, x + 3]++;
+                            if (y > moves[1, x + 3])
+                            {
+                                moves[1, x + 3] = y;
+                            }
+                        }
+                        if (Discs[x + 3, y] != null && Discs[x + 1, y] == null && Discs[x + 2, y] != null &&
+                            Discs[x + 3, y].Color == color && AvailablePlaceY(x + 1) == y && Discs[x + 2, y].Color == color)
+                        {
+                            moves[0, x + 1]++;
+                            if (y > moves[1, x + 1])
+                            {
+                                moves[1, x + 1] = y;
+                            }
+                        }
+                        if (Discs[x + 3, y] != null && Discs[x + 1, y] != null && Discs[x + 2, y] == null &&
+                            Discs[x + 3, y].Color == color && Discs[x + 1, y].Color == color && AvailablePlaceY(x + 2) == y)
+                        {
+                            moves[0, x + 2]++;
+                            if (y > moves[1, x + 2])
+                            {
+                                moves[1, x + 2] = y;
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (int y = 0; y < 3; y++)
+            {
+                for (int x = 0; x < 4; x++)
+                {
+                    if (Discs[x + 3, y + 3] == null && AvailablePlaceY(x + 3) > y + 3)
+                    {
+                        if (Discs[x, y] == null && Discs[x + 1, y + 1] != null && Discs[x + 2, y + 2] != null &&
+                            AvailablePlaceY(x) == y && Discs[x + 1, y + 1].Color == color && Discs[x + 2, y + 2].Color == color)
+                        {
+                            moves[0, x]++;
+                            if (y > moves[1, x])
+                            {
+                                moves[1, x] = y + 3;
+                            }
+                        }
+                        if (Discs[x, y] != null && Discs[x + 1, y + 1] == null && Discs[x + 2, y + 2] != null &&
+                            Discs[x, y].Color == color && AvailablePlaceY(x + 1) == y + 1 && Discs[x + 2, y + 2].Color == color)
+                        {
+                            moves[0, x + 1]++;
+                            if (y > moves[1, x + 1])
+                            {
+                                moves[1, x + 1] = y + 3;
+                            }
+                        }
+                        if (Discs[x, y] != null && Discs[x + 1, y + 1] != null && Discs[x + 2, y + 2] == null &&
+                            Discs[x, y].Color == color && Discs[x + 1, y + 1].Color == color && AvailablePlaceY(x + 2) == y + 2)
+                        {
+                            moves[0, x + 2]++;
+                            if (y > moves[1, x + 2])
+                            {
+                                moves[1, x + 2] = y + 3;
+                            }
+                        }
+                    }
+                    else if (Discs[x + 2, y + 2] == null && AvailablePlaceY(x + 2) > y + 2)
+                    {
+                        if (Discs[x, y] == null && Discs[x + 1, y + 1] != null && Discs[x + 3, y + 3] != null &&
+                            AvailablePlaceY(x) == y && Discs[x + 1, y + 1].Color == color && Discs[x + 3, y + 3].Color == color)
+                        {
+                            moves[0, x]++;
+                            if (y > moves[1, x])
+                            {
+                                moves[1, x] = y + 2;
+                            }
+                        }
+                        if (Discs[x, y] != null && Discs[x + 1, y + 1] == null && Discs[x + 3, y + 3] != null &&
+                            Discs[x, y].Color == color && AvailablePlaceY(x + 1) == y + 1 && Discs[x + 3, y + 3].Color == color)
+                        {
+                            moves[0, x + 1]++;
+                            if (y > moves[1, x + 1])
+                            {
+                                moves[1, x + 1] = y + 2;
+                            }
+                        }
+                        if (Discs[x, y] != null && Discs[x + 1, y + 1] != null && Discs[x + 3, y + 3] == null &&
+                            Discs[x, y].Color == color && Discs[x + 1, y + 1].Color == color && AvailablePlaceY(x + 3) == y + 3)
+                        {
+                            moves[0, x + 3]++;
+                            if (y > moves[1, x + 3])
+                            {
+                                moves[1, x + 3] = y + 2;
+                            }
+                        }
+                    }
+                    else if (Discs[x + 1, y + 1] == null && AvailablePlaceY(x + 1) > y + 1)
+                    {
+                        if (Discs[x, y] == null && Discs[x + 2, y + 2] != null && Discs[x + 3, y + 3] != null &&
+                            AvailablePlaceY(x) == y && Discs[x + 2, y + 2].Color == color && Discs[x + 3, y + 3].Color == color)
+                        {
+                            moves[0, x]++;
+                            if (y > moves[1, x])
+                            {
+                                moves[1, x] = y + 1;
+                            }
+                        }
+                        if (Discs[x, y] != null && Discs[x + 2, y + 2] == null && Discs[x + 3, y + 3] != null &&
+                            Discs[x, y].Color == color && AvailablePlaceY(x + 2) == y + 2 && Discs[x + 3, y + 3].Color == color)
+                        {
+                            moves[0, x + 2]++;
+                            if (y > moves[1, x + 2])
+                            {
+                                moves[1, x + 2] = y + 1;
+                            }
+                        }
+                        if (Discs[x, y] != null && Discs[x + 2, y + 2] != null && Discs[x + 3, y + 3] == null &&
+                            Discs[x, y].Color == color && Discs[x + 2, y + 2].Color == color && AvailablePlaceY(x + 3) == y + 3)
+                        {
+                            moves[0, x + 3]++;
+                            if (y > moves[1, x + 3])
+                            {
+                                moves[1, x + 3] = y + 1;
+                            }
+                        }
+                    }
+                    else if (Discs[x, y] == null && AvailablePlaceY(x) > y)
+                    {
+                        if (Discs[x + 3, y + 3] == null && Discs[x + 1, y + 1] != null && Discs[x + 2, y + 2] != null &&
+                            AvailablePlaceY(x + 3) == y + 3 && Discs[x + 1, y + 1].Color == color && Discs[x + 2, y + 2].Color == color)
+                        {
+                            moves[0, x + 3]++;
+                            if (y > moves[1, x + 3])
+                            {
+                                moves[1, x + 3] = y;
+                            }
+                        }
+                        if (Discs[x + 3, y + 3] != null && Discs[x + 1, y + 1] == null && Discs[x + 2, y + 2] != null &&
+                            Discs[x + 3, y + 3].Color == color && AvailablePlaceY(x + 1) == y + 1 && Discs[x + 2, y + 2].Color == color)
+                        {
+                            moves[0, x + 1]++;
+                            if (y > moves[1, x + 1])
+                            {
+                                moves[1, x + 1] = y;
+                            }
+                        }
+                        if (Discs[x + 3, y + 3] != null && Discs[x + 1, y + 1] != null && Discs[x + 2, y + 2] == null &&
+                            Discs[x + 3, y + 3].Color == color && Discs[x + 1, y + 1].Color == color && AvailablePlaceY(x + 2) == y + 2)
+                        {
+                            moves[0, x + 2]++;
+                            if (y > moves[1, x + 2])
+                            {
+                                moves[1, x + 2] = y;
+                            }
+                        }
+                    }
+                }
+                for (int x = 3; x < 7; x++)
+                {
+                    if (Discs[x - 3, y + 3] == null && AvailablePlaceY(x - 3) > y + 3)
+                    {
+                        if (Discs[x, y] == null && Discs[x - 1, y + 1] != null && Discs[x - 2, y + 2] != null &&
+                            AvailablePlaceY(x) == y && Discs[x - 1, y + 1].Color == color && Discs[x - 2, y + 2].Color == color)
+                        {
+                            moves[0, x]++;
+                            if (y > moves[1, x])
+                            {
+                                moves[1, x] = y + 3;
+                            }
+                        }
+                        if (Discs[x, y] != null && Discs[x - 1, y + 1] == null && Discs[x - 2, y + 2] != null &&
+                            Discs[x, y].Color == color && AvailablePlaceY(x - 1) == y + 1 && Discs[x - 2, y + 2].Color == color)
+                        {
+                            moves[0, x - 1]++;
+                            if (y > moves[1, x - 1])
+                            {
+                                moves[1, x - 1] = y + 3;
+                            }
+                        }
+                        if (Discs[x, y] != null && Discs[x - 1, y + 1] != null && Discs[x - 2, y + 2] == null &&
+                            Discs[x, y].Color == color && Discs[x - 1, y + 1].Color == color && AvailablePlaceY(x - 2) == y + 2)
+                        {
+                            moves[0, x - 2]++;
+                            if (y > moves[1, x - 2])
+                            {
+                                moves[1, x - 2] = y + 3;
+                            }
+                        }
+                    }
+                    else if (Discs[x - 2, y + 2] == null && AvailablePlaceY(x - 2) > y + 2)
+                    {
+                        if (Discs[x, y] == null && Discs[x - 1, y + 1] != null && Discs[x - 3, y + 3] != null &&
+                            AvailablePlaceY(x) == y && Discs[x - 1, y + 1].Color == color && Discs[x - 3, y + 3].Color == color)
+                        {
+                            moves[0, x]++;
+                            if (y > moves[1, x])
+                            {
+                                moves[1, x] = y + 2;
+                            }
+                        }
+                        if (Discs[x, y] != null && Discs[x - 1, y + 1] == null && Discs[x - 3, y + 3] != null &&
+                            Discs[x, y].Color == color && AvailablePlaceY(x - 1) == y + 1 && Discs[x - 3, y + 3].Color == color)
+                        {
+                            moves[0, x - 1]++;
+                            if (y > moves[1, x - 1])
+                            {
+                                moves[1, x - 1] = y + 2;
+                            }
+                        }
+                        if (Discs[x, y] != null && Discs[x - 1, y + 1] != null && Discs[x - 3, y + 3] == null &&
+                            Discs[x, y].Color == color && Discs[x - 1, y + 1].Color == color && AvailablePlaceY(x - 3) == y + 3)
+                        {
+                            moves[0, x - 3]++;
+                            if (y > moves[1, x - 3])
+                            {
+                                moves[1, x - 3] = y + 2;
+                            }
+                        }
+                    }
+                    else if (Discs[x - 1, y + 1] == null && AvailablePlaceY(x - 1) > y + 1)
+                    {
+                        if (Discs[x, y] == null && Discs[x - 2, y + 2] != null && Discs[x - 3, y + 3] != null &&
+                            AvailablePlaceY(x) == y && Discs[x - 2, y + 2].Color == color && Discs[x - 3, y + 3].Color == color)
+                        {
+                            moves[0, x]++;
+                            if (y > moves[1, x])
+                            {
+                                moves[1, x] = y + 1;
+                            }
+                        }
+                        if (Discs[x, y] != null && Discs[x - 2, y + 2] == null && Discs[x - 3, y + 3] != null &&
+                            Discs[x, y].Color == color && AvailablePlaceY(x - 2) == y + 2 && Discs[x - 3, y + 3].Color == color)
+                        {
+                            moves[0, x - 2]++;
+                            if (y > moves[1, x - 2])
+                            {
+                                moves[1, x - 2] = y + 1;
+                            }
+                        }
+                        if (Discs[x, y] != null && Discs[x - 2, y + 2] != null && Discs[x - 3, y + 3] == null &&
+                            Discs[x, y].Color == color && Discs[x - 2, y + 2].Color == color && AvailablePlaceY(x - 3) == y + 3)
+                        {
+                            moves[0, x - 3]++;
+                            if (y > moves[1, x - 3])
+                            {
+                                moves[1, x - 3] = y + 1;
+                            }
+                        }
+                    }
+                    else if (Discs[x, y] == null && AvailablePlaceY(x) > y)
+                    {
+                        if (Discs[x - 3, y + 3] == null && Discs[x - 1, y + 1] != null && Discs[x - 2, y + 2] != null &&
+                            AvailablePlaceY(x - 3) == y + 3 && Discs[x - 1, y + 1].Color == color && Discs[x - 2, y + 2].Color == color)
+                        {
+                            moves[0, x - 3]++;
+                            if (y > moves[1, x - 3])
+                            {
+                                moves[1, x - 3] = y;
+                            }
+                        }
+                        if (Discs[x - 3, y + 3] != null && Discs[x - 1, y + 1] == null && Discs[x - 2, y + 2] != null &&
+                            Discs[x - 3, y + 3].Color == color && AvailablePlaceY(x - 1) == y + 1 && Discs[x - 2, y + 2].Color == color)
+                        {
+                            moves[0, x - 1]++;
+                            if (y > moves[1, x - 1])
+                            {
+                                moves[1, x - 1] = y;
+                            }
+                        }
+                        if (Discs[x - 3, y + 3] != null && Discs[x - 1, y + 1] != null && Discs[x - 2, y + 2] == null &&
+                            Discs[x - 3, y + 3].Color == color && Discs[x - 1, y + 1].Color == color && AvailablePlaceY(x - 2) == y + 2)
+                        {
+                            moves[0, x - 2]++;
+                            if (y > moves[1, x - 2])
+                            {
+                                moves[1, x - 2] = y;
+                            }
+                        }
+                    }
+                }
+            }
+            return moves;
+        }
+
         public ConsoleColor CheckStatus() // check horizontal, vertical, and diagonal connections, return winner's disc color
         {
             for (int y = 0; y < 6; y++) // check horizontal
