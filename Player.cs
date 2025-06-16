@@ -391,7 +391,7 @@ namespace ConnectFour
         private int GetAIMove(Table table) // AI move
         {
             int x = -1;
-            if (table.Full()) // whether the table is full
+            if (!table.Full()) // whether the table is full
             {
                 x = CheckWinMove(table);
                 Thought = "Win: " + (x + 1);

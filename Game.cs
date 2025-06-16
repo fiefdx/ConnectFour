@@ -314,12 +314,10 @@ namespace ConnectFour
             {
                 PrintTie();
             }
-
             else if (Winner == null)
             {
                 PrintTitle();
             }
-            
             else
             {
                 if (Winner.Id == 2)
@@ -375,9 +373,6 @@ namespace ConnectFour
          ┃          other keys for Two players mode.             ┃
          ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛";
             Console.WriteLine(Menu);
-        
-       
-
 
         ConsoleKeyInfo keyInfo = Console.ReadKey(true); // keyboard input
             Disc disc1 = new Disc(0, 0, new string[] 
