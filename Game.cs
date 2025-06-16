@@ -22,7 +22,7 @@ namespace ConnectFour
             TurnPlayer = Player1;
             Winner = null;
             GameTable = new Table(ConsoleColor.Gray);
-            DisplayCache = new Char[90, 40];
+            DisplayCache = new Char[76, 27];
             Over = false;
         }
 
@@ -70,8 +70,7 @@ namespace ConnectFour
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             Console.ForegroundColor = ConsoleColor.Green;
-            string asciiArt = @"
-         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+            string asciiArt = @"         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
          ┃██                                    _     _  _     ██┃
          ┃██                                   | |   | || |    ██┃
          ┃██     ___ ___  _ __  _ __   ___  ___| |_  | || |_   ██┃
@@ -88,8 +87,7 @@ namespace ConnectFour
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             Console.ForegroundColor = ConsoleColor.Red;
-            string asciiP1 = @"
-         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓    
+            string asciiP1 = @"         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
          ┃██              _                         __         ██┃
          ┃██             | |                       /_ |        ██┃
          ┃██        _ __ | | __ _ _   _  ___ _ __   | |        ██┃
@@ -105,8 +103,7 @@ namespace ConnectFour
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             Console.ForegroundColor = ConsoleColor.Blue;
-            string asciiP1 = @"
-         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓    
+            string asciiP1 = @"         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
          ┃██              _                         ___        ██┃
          ┃██             | |                       |__ \       ██┃
          ┃██        _ __ | | __ _ _   _  ___ _ __     ) |      ██┃
@@ -123,8 +120,7 @@ namespace ConnectFour
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             Console.ForegroundColor = ConsoleColor.Yellow;
-            string asciiP1 = @"
-         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ 
+            string asciiP1 = @"         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
          ┃██                                                   ██┃
          ┃██               _______ _____ ______                ██┃
          ┃██              |__   __|_   _|  ____|               ██┃
@@ -241,16 +237,14 @@ namespace ConnectFour
             if (Over)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine(@"
-         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ 
+                Console.WriteLine(@"         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ 
          ┃██      Press 'R' to restart or 'Esc' to exit.       ██┃
          ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
             }
             else
             {
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
-                Console.WriteLine(@"
-         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+                Console.WriteLine(@"         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
          ┃██   Use Arrow keys to move, Enter to place a disc,  ██┃        
          ┃██    or press Number keys[1-7] to place a disc,     ██┃    
          ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫ 
@@ -277,9 +271,9 @@ namespace ConnectFour
         public void Render()
         {
             // render display cache
-            for (int y = 0; y < 27; y++)
+            for (int y = 0; y < DisplayCache.GetLength(1); y++)
             {
-                for (int x = 0; x < 76; x++)
+                for (int x = 0; x < DisplayCache.GetLength(0); x++)
                 {
                     Char c = DisplayCache[x, y];
                     if (c == null)
@@ -365,8 +359,7 @@ namespace ConnectFour
             Console.Clear(); // clear console
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             Console.ForegroundColor = ConsoleColor.DarkBlue;
-            string Menu = @"
-         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+            string Menu = @"         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
          ┃███████  █████  ██   ██ ██   ██ ██▀▀▀▀▀ ███████ ███████┃ 
          ┃██      ██   ██ ████ ██ ████ ██ ██▄▄    ██        ███  ┃  
          ┃██      ██   ██ ████ ██ ████ ██ ██▀▀    ██        ███  ┃  
