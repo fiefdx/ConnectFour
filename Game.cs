@@ -71,13 +71,14 @@ namespace ConnectFour
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             Console.ForegroundColor = ConsoleColor.Green;
             string asciiArt = @"
-         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓    
+         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
          ┃██                                    _     _  _     ██┃
          ┃██                                   | |   | || |    ██┃
          ┃██     ___ ___  _ __  _ __   ___  ___| |_  | || |_   ██┃
          ┃██    / __/ _ \| '_ \| '_ \ / _ \/ __| __| |__   _|  ██┃ 
          ┃██   | (_| (_) | | | | | | |  __/ (__| |_     | |    ██┃
          ┃██    \___\___/|_| |_|_| |_|\___|\___|\__|    |_|    ██┃
+         ┃██                                                   ██┃
          ┃██                                                   ██┃
          ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛";
             Console.WriteLine(asciiArt);
@@ -259,11 +260,17 @@ namespace ConnectFour
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             if (Player1.Type == "CPU")
             {
-                Console.WriteLine($"           Step({GameTable.DiscCounter}): CPU[{Player1.Thought}]");
+                string thought = $"   Step({GameTable.DiscCounter}): CPU[{Player1.Thought}]";
+                Console.WriteLine("         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
+                Console.WriteLine($"         ┃██{thought.PadRight(51)}██┃");
+                Console.WriteLine("         ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
             }
             else if (Player2.Type == "CPU")
             {
-                Console.WriteLine($"           Step({GameTable.DiscCounter}): CPU[{Player2.Thought}]");
+                string thought = $"   Step({GameTable.DiscCounter}): CPU[{Player2.Thought}]";
+                Console.WriteLine("         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
+                Console.WriteLine($"         ┃██{thought.PadRight(51)}██┃");
+                Console.WriteLine("         ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
             }
         }
 
