@@ -394,19 +394,19 @@ namespace ConnectFour
             if (!table.Full()) // whether the table is full
             {
                 x = CheckWinMove(table);
-                Thought = "Win: " + (x + 1);
+                Thought = $"Step({table.DiscCounter + 1}): Win: " + (x + 1);
                 if (x == -1) // back to defensive move
                 {
                     x = CheckDefensiveMove(table);
-                    Thought = "Defensive: " + (x + 1);
+                    Thought = $"Step({table.DiscCounter + 1}): Defensive: " + (x + 1);
                     if (x == -1) // back to offensive move
                     {
                         x = CheckOffensiveMove(table);
-                        Thought = "Offensive: " + (x + 1);
+                        Thought = $"Step({table.DiscCounter + 1}): Offensive: " + (x + 1);
                         if (x == -1) // back to random move
                         {
                             x = CheckRandomMove(table);
-                            Thought = "Random: " + (x + 1);
+                            Thought = $"Step({table.DiscCounter + 1}): Random: " + (x + 1);
                         }
                     }
                 }
@@ -420,13 +420,13 @@ namespace ConnectFour
             {
                 if (table.DiscCounter == 0)
                 {
-                    Thought = "Initial: 4";
+                    Thought = $"Step({table.DiscCounter + 1}): Initial: 4";
                     return 3; // Always play in the middle column for Player 1 on the first move
                 }
                 else if (table.DiscCounter == 2)
                 {
                     int x = AvailableClosePlace(table, 3, 5);
-                    Thought = "Initial: " + (x + 1);
+                    Thought = $"Step({table.DiscCounter + 1}): Initial: " + (x + 1);
                     return x; // Always play in the second column for Player 1 on the second move
                 }
                 return GetAIMove(table); // For Player 1, use AI logic after the first two moves
@@ -435,7 +435,7 @@ namespace ConnectFour
             {
                 if (table.DiscCounter == 1 || table.DiscCounter == 0)
                 {
-                    Thought = "Initial: 4";
+                    Thought = $"Step({table.DiscCounter + 1}): Initial: 4";
                     return 3; // Always play in the middle column for Player 2 on the first move
                 }
                 return GetAIMove(table); // For Player 2, use AI logic after the first two moves

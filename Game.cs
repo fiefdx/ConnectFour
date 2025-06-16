@@ -254,14 +254,14 @@ namespace ConnectFour
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             if (Player1.Type == "CPU")
             {
-                string thought = $"   Step({GameTable.DiscCounter}): CPU[{Player1.Thought}]";
+                string thought = $"   CPU[{Player1.Thought}]";
                 Console.WriteLine("         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
                 Console.WriteLine($"         ┃██{thought.PadRight(51)}██┃");
                 Console.WriteLine("         ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
             }
             else if (Player2.Type == "CPU")
             {
-                string thought = $"   Step({GameTable.DiscCounter}): CPU[{Player2.Thought}]";
+                string thought = $"   CPU[{Player2.Thought}]";
                 Console.WriteLine("         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
                 Console.WriteLine($"         ┃██{thought.PadRight(51)}██┃");
                 Console.WriteLine("         ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
