@@ -23,8 +23,6 @@
 
         public void Render(Char[,] displayCache, int offsetX = 0, int offsetY = 0, bool step = false)
         {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
-
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)

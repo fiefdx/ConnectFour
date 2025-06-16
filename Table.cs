@@ -699,7 +699,6 @@
 
         public void Render(Char[,] displayCache, int offsetX = 0, int offsetY = 0)
         {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
             for (int y = 0; y < 27; y++)
             {
                 if (y == 0 || y == 26)

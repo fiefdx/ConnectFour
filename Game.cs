@@ -68,7 +68,6 @@ namespace ConnectFour
 
         public void PrintTitle()
         {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
             Console.ForegroundColor = ConsoleColor.Green;
             string asciiArt = @"         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
          ┃██                                    _     _  _     ██┃
@@ -85,7 +84,6 @@ namespace ConnectFour
 
         public void PrintWinnerP1()
         {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
             Console.ForegroundColor = ConsoleColor.Red;
             string asciiP1 = @"         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
          ┃██              _                         __         ██┃
@@ -101,7 +99,6 @@ namespace ConnectFour
         }
         public void PrintWinnerP2()
         {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
             Console.ForegroundColor = ConsoleColor.Blue;
             string asciiP1 = @"         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
          ┃██              _                         ___        ██┃
@@ -118,7 +115,6 @@ namespace ConnectFour
 
         public void PrintTie()
         {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
             Console.ForegroundColor = ConsoleColor.Yellow;
             string asciiP1 = @"         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
          ┃██                                                   ██┃
