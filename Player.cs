@@ -98,7 +98,77 @@ namespace ConnectFour
 
         private int CheckDefensiveMove(Table table) // check whether has a move for defensive
         {
-            return -1;
+            ConsoleColor opponentColor = Id == 1 ? ConsoleColor.Blue : ConsoleColor.Red; // opponent's color
+            int[] opponentMoves2 = table.CheckOffensiveMove23(opponentColor);
+            int[] opponentMoves3 = table.CheckOffensiveMove34(opponentColor);
+            int max = 0, maxX = -1;
+            int[] badMove = { 0, 0, 0, 0, 0, 0, 0 };
+            int[] lockMoves = table.CheckLockColumnStatus(Disc.Color, Id);
+            int[,] opponentLock = table.CheckFormLockMove(opponentColor);
+            for (int x = 0; x < Table.Width; x++)
+            {
+                if (opponentMoves2[x] > 0 && opponentMoves3[x] > 0)
+                {
+                    return x;
+                }
+            }
+            for (int x = 0; x < Table.Width; x++)
+            {
+                if (opponentMoves3[x] > 0)
+                {
+                    return x;
+                }
+            }
+            int maxY = MaxSubArray(opponentLock, 1);
+            for (int x = 0; x < Table.Width; x++)
+            {
+                if (opponentLock[0, x] > 0 && opponentLock[1, x] == maxY)
+                {
+                    int y = table.AvailablePlaceY(x);
+                    if (y >= 0)
+                    {
+                        Table t = new Table();
+                        t.CopyFrom(table);
+                        t.PlaceDisc(x, Disc);
+                        int[] afterOpponentMoves3 = t.CheckOffensiveMove34(opponentColor);
+                        int[] afterOpponentMoves2 = t.CheckOffensiveMove23(opponentColor);
+                        int[] afterLockMoves = t.CheckLockColumnStatus(Disc.Color, Id);
+                        if (afterOpponentMoves3.Sum() <= opponentMoves3.Sum() && afterOpponentMoves2.Sum() <= opponentMoves2.Sum() && afterLockMoves.Sum() >= lockMoves.Sum())
+                        {
+                            return x;
+                        }
+                    }
+                }
+            }
+            for (int x = 0; x < Table.Width; x++)
+            {
+                if (opponentMoves2[x] > 1)
+                {
+                    if (opponentMoves2[x] > max)
+                    {
+                        int y = table.AvailablePlaceY(x);
+                        if (y >= 0)
+                        {
+                            Table t = new Table();
+                            t.CopyFrom(table);
+                            t.PlaceDisc(x, Disc);
+                            int[] afterOpponentMoves3 = t.CheckOffensiveMove34(opponentColor);
+                            int[] afterOpponentMoves2 = t.CheckOffensiveMove23(opponentColor);
+                            int[] afterLockMoves = t.CheckLockColumnStatus(Disc.Color, Id);
+                            if (afterOpponentMoves3.Sum() > opponentMoves3.Sum() || afterOpponentMoves2.Sum() > opponentMoves2.Sum() || afterLockMoves.Sum() < lockMoves.Sum())
+                            {
+                                badMove[x]++;
+                            }
+                            else
+                            {
+                                max = opponentMoves2[x];
+                                maxX = x;
+                            }
+                        }
+                    }
+                }
+            }
+            return maxX;
         }
 
         private int CheckOffensiveMove(Table table) // check whether has a move for offensive
