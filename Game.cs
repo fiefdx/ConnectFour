@@ -345,7 +345,7 @@ namespace ConnectFour
             GameTable.Clear();
             Over = false;
             Winner = null;
-
+            TurnPlayer = Player1;
         }
     }
 
