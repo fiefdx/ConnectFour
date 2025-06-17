@@ -709,7 +709,7 @@
                         {
                             if (y == 0)
                             {
-                                displayCache[x + offsetX, y + offsetY] = new Char(x == 0 ? "┏" : "┓", Color);
+                                displayCache[x + offsetX, y + offsetY] = new Char(x == 0 ? "┣" : "┫", Color);
                             }
                             else
                             {
