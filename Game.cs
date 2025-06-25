@@ -177,38 +177,6 @@ namespace ConnectFour
             }
         }
 
-        public void RenderWinStatus()
-        {
-            // render which player win the game or tie
-            if (Over)
-            {
-                if (Winner == null)
-                {
-                    int offsetX1 = 3, offsetX2 = 70;
-                    string tie = "TIE";
-
-                    for (int x = 0; x < 3; x++)
-                    {
-                        DisplayCache[x + offsetX1, 15] = new Char(tie[x].ToString(), ConsoleColor.Green);
-                        DisplayCache[x + offsetX2, 15] = new Char(tie[x].ToString(), ConsoleColor.Green);
-                    }
-                }
-                else
-                {
-                    int offsetX = 3;
-                    string win = "WIN";
-                    if (Winner.Id == 2)
-                    {
-                        offsetX = 70;
-                    }
-                    for (int x = 0; x < 3; x++)
-                    {
-                        DisplayCache[x + offsetX, 15] = new Char(win[x].ToString(), ConsoleColor.Green);
-                    }
-                }
-            }
-        }
-
         public void RenderCursor(int cX, int cY, ConsoleColor color, int offsetX = 9, int offsetY = 0)
         {
 
@@ -304,14 +272,14 @@ namespace ConnectFour
             }
         }
 
-        public bool isTie()
+        public bool IsTie()
         {
             return Over && Winner == null;
         }
 
         public void RenderFrame(int cX, int cY)
         {
-            if (isTie())
+            if (IsTie())
             {
                 PrintTie();
             }

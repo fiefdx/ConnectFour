@@ -283,7 +283,6 @@
             return moves;
         }
 
-
         public int[] CheckOffensiveMove23(ConsoleColor color) // from 2 to 3 in line
         {
             int[] moves = { 0, 0, 0, 0, 0, 0, 0 };
@@ -532,7 +531,6 @@
             return moves;
         }
 
-
         public int[] CheckOffensiveMove34(ConsoleColor color) // 3 to 4 in line places
         {
             int[] moves = { 0, 0, 0, 0, 0, 0, 0 };
@@ -624,8 +622,6 @@
             }
             return moves;
         }
-
-
 
         public int[] CheckFormMove3(ConsoleColor color) // 2 to connect 3 with both sides opening
         {

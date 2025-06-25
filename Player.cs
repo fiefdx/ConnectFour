@@ -105,21 +105,21 @@ namespace ConnectFour
             int[] badMove = { 0, 0, 0, 0, 0, 0, 0 };
             int[] lockMoves = table.CheckLockColumnStatus(Disc.Color, Id);
             int[,] opponentLock = table.CheckFormLockMove(opponentColor);
-            for (int x = 0; x < Table.Width; x++)
+            for (int x = 0; x < Table.Width; x++) // defence 2 to 3 and 3 to 4
             {
                 if (opponentMoves2[x] > 0 && opponentMoves3[x] > 0)
                 {
                     return x;
                 }
             }
-            for (int x = 0; x < Table.Width; x++)
+            for (int x = 0; x < Table.Width; x++) // defence 3 to 4
             {
                 if (opponentMoves3[x] > 0)
                 {
                     return x;
                 }
             }
-            int maxY = MaxSubArray(opponentLock, 1);
+            int maxY = MaxSubArray(opponentLock, 1); // defence lock column
             for (int x = 0; x < Table.Width; x++)
             {
                 if (opponentLock[0, x] > 0 && opponentLock[1, x] == maxY)
@@ -140,7 +140,7 @@ namespace ConnectFour
                     }
                 }
             }
-            for (int x = 0; x < Table.Width; x++)
+            for (int x = 0; x < Table.Width; x++) // defence 22 to 23
             {
                 if (opponentMoves2[x] > 1)
                 {
@@ -185,7 +185,7 @@ namespace ConnectFour
             int[] badMove = { 0, 0, 0, 0, 0, 0, 0 };
             int[] goodMove2 = { 0, 0, 0, 0, 0, 0, 0 };
             int[] goodMove1 = { 0, 0, 0, 0, 0, 0, 0 };
-            for (int x = 0; x < Table.Width; x++)
+            for (int x = 0; x < Table.Width; x++) // offense form 3 two sides opening
             {
                 if (form3[x] > 0)
                 {
@@ -205,7 +205,7 @@ namespace ConnectFour
                     }
                 }
             }
-            int maxY = MaxSubArray(formLock, 1);
+            int maxY = MaxSubArray(formLock, 1); // offense lock column
             for (int y = maxY; y >= 0; y--)
             {
                 for (int x = 0; x < Table.Width; x++)
