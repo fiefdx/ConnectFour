@@ -1,8 +1,4 @@
-﻿using System.Drawing;
-using System.Security.Cryptography;
-using System.Text;
-
-namespace ConnectFour
+﻿namespace ConnectFour
 {
     public class Game
     {
