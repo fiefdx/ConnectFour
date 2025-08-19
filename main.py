@@ -108,6 +108,7 @@ class Game(object):
         self.cursor_x = 0
         self.task_queue = task_queue
         self.result_queue = result_queue
+        self.sound_effect = pygame.mixer.Sound("audio/sound.mp3")
 
     def is_full(self):
         return self.discs_counter >= 42
@@ -478,6 +479,7 @@ class Game(object):
                 window.blit(yellow_disc_small, (offset_x + x * 128, offset_y + y * 128))
             else:
                 self.turn_place_disc(x)
+                self.sound_effect.play()
                 self.dropping = False
                 if not self.over and ((self.mode == "play red" and self.turn == self.yellow) or (self.mode == "play yellow" and self.turn == self.red)):
                     self.thinking = True
@@ -564,6 +566,7 @@ class Game(object):
 class UserInterface(object):
     def __init__(self, think_thread, task_queue, result_queue):
         pygame.init()
+        pygame.mixer.init()
         self.window = pygame.display.set_mode((1280, 768)) # , pygame.RESIZABLE)
         pygame.display.set_caption("Connect Four")
         pygame.display.set_icon(pygame.image.load("assets/disc-red.png"))
