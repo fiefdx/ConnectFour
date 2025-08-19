@@ -6,7 +6,7 @@ import threading
 from threading import Thread
 from queue import Queue, Empty
 
-__version__ = "1.3.0"
+__version__ = "1.3.1"
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
