@@ -569,7 +569,7 @@ class UserInterface(object):
         pygame.mixer.init()
         self.window = pygame.display.set_mode((1280, 768)) # , pygame.RESIZABLE)
         pygame.display.set_caption("Connect Four")
-        pygame.display.set_icon(pygame.image.load("assets/disc-red.png"))
+        pygame.display.set_icon(pygame.image.load("assets/icon.png"))
 
         self.game = Game(task_queue = task_queue, result_queue = result_queue)
         self.think_thread = think_thread
