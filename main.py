@@ -109,6 +109,9 @@ class Game(object):
         self.task_queue = task_queue
         self.result_queue = result_queue
         self.sound_effect = pygame.mixer.Sound("audio/sound.mp3")
+        self.red_disc_small = pygame.image.load("assets/disc-red-small.png")
+        self.yellow_disc_small = pygame.image.load("assets/disc-yellow-small.png")
+        self.board_part = pygame.image.load("assets/board-part.png")
 
     def is_full(self):
         return self.discs_counter >= 42
@@ -467,14 +470,12 @@ class Game(object):
         offset_x = 0
         offset_y = 0
         window.fill((220,220,220))
-        red_disc_small = pygame.image.load("assets/disc-red-small.png")
-        yellow_disc_small = pygame.image.load("assets/disc-yellow-small.png")
         if self.dropping:
             color, x, y = self.disc.get_frame()
             if color == self.red:
-                window.blit(red_disc_small, (offset_x + x * 128, offset_y + y * 128))
+                window.blit(self.red_disc_small, (offset_x + x * 128, offset_y + y * 128))
             elif color == self.yellow:
-                window.blit(yellow_disc_small, (offset_x + x * 128, offset_y + y * 128))
+                window.blit(self.yellow_disc_small, (offset_x + x * 128, offset_y + y * 128))
             else:
                 self.turn_place_disc(x)
                 self.sound_effect.play()
@@ -486,18 +487,17 @@ class Game(object):
         for y in range(6):
             for x in range(7):
                 if self.board[y][x] == self.red:
-                    window.blit(red_disc_small, (offset_x + x * 128, offset_y + y * 128))
+                    window.blit(self.red_disc_small, (offset_x + x * 128, offset_y + y * 128))
                 elif self.board[y][x] == self.yellow:
-                    window.blit(yellow_disc_small, (offset_x + x * 128, offset_y + y * 128))
-                b = pygame.image.load("assets/board-part.png")
-                window.blit(b, (offset_x + x * 128, offset_y + y * 128))
+                    window.blit(self.yellow_disc_small, (offset_x + x * 128, offset_y + y * 128))
+                window.blit(self.board_part, (offset_x + x * 128, offset_y + y * 128))
                 pygame.draw.rect(window, red if self.turn == self.red else yellow, (offset_x + self.cursor_x * 128, offset_y, 128, 768), 5)
-                window.blit(red_disc_small, (offset_x + 7 * 128, offset_y + 0 * 128))
+                window.blit(self.red_disc_small, (offset_x + 7 * 128, offset_y + 0 * 128))
 
                 red_win_stats = self.stats_font.render(": %s %s" % (self.stats[self.red], "WIN" if self.over and self.win == self.red else ""), True, red)
                 window.blit(red_win_stats, (offset_x + 7 * 128 + 128, offset_y + 0 * 128 + 48))
                 
-                window.blit(yellow_disc_small, (offset_x + 7 * 128, offset_y + 1 * 128))
+                window.blit(self.yellow_disc_small, (offset_x + 7 * 128, offset_y + 1 * 128))
                 tie_stats = self.stats_font.render(": %s %s" % (self.stats[self.empty], "TIE" if self.over and self.win == self.empty else ""), True, (0, 0, 0))
                 window.blit(tie_stats, (offset_x + 7 * 128 + 128, offset_y + 0 * 128 + 112))
 
