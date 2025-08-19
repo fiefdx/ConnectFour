@@ -467,8 +467,6 @@ class Game(object):
         offset_x = 0
         offset_y = 0
         window.fill((220,220,220))
-        red_disc = pygame.image.load("assets/disc-red.png")
-        yellow_disc = pygame.image.load("assets/disc-yellow.png")
         red_disc_small = pygame.image.load("assets/disc-red-small.png")
         yellow_disc_small = pygame.image.load("assets/disc-yellow-small.png")
         if self.dropping:
