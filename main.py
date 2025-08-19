@@ -79,7 +79,7 @@ class Game(object):
         self.title_font = pygame.font.Font("assets/BD_Cartoon_Shout.ttf", 72)
         self.item_font = pygame.font.Font("assets/BD_Cartoon_Shout.ttf", 36)
         self.stats_font = pygame.font.Font("assets/BD_Cartoon_Shout.ttf", 30)
-        self.info_font = pygame.font.Font("assets/BD_Cartoon_Shout.ttf", 16)
+        self.info_font = pygame.font.Font("assets/BD_Cartoon_Shout.ttf", 14)
         self.red = 1
         self.yellow = 2
         self.empty = 0
@@ -417,6 +417,11 @@ class Game(object):
         window.blit(help_info, (x, y))
         y += (150 * help_info.get_height()) // 100
 
+        help_info = self.info_font.render("F to toggle fullscreen or windowed", True, green)
+        x = (window.get_width() - help_info.get_width()) // 2
+        window.blit(help_info, (x, y))
+        y += (150 * help_info.get_height()) // 100
+
         help_info = self.info_font.render("esc to quit", True, green)
         x = (window.get_width() - help_info.get_width()) // 2
         window.blit(help_info, (x, y))
@@ -463,6 +468,8 @@ class Game(object):
                     self.menu_idx += 1
                     if self.menu_idx >= 1:
                         self.menu_idx = 1
+                elif event.key == pygame.K_f:
+                    pygame.display.toggle_fullscreen()
 
     def render_game(self, window):
         red = (180, 53, 53)
@@ -526,10 +533,12 @@ class Game(object):
         window.blit(think_tie, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 192))
 
         help_info = self.info_font.render("left or right to switch column", True, green)
-        window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 300))
+        window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 280))
         help_info = self.info_font.render("enter to place disc", True, green)
-        window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 320))
+        window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 300))
         help_info = self.info_font.render("r to restart", True, green)
+        window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 320))
+        help_info = self.info_font.render("f to toggle fullscreen or windowed", True, green)
         window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 340))
         help_info = self.info_font.render("esc back to menu", True, green)
         window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 360))
@@ -561,13 +570,15 @@ class Game(object):
                     self.cursor_x += 1
                     if self.cursor_x >= 6:
                         self.cursor_x = 6
+                elif event.key == pygame.K_f:
+                    pygame.display.toggle_fullscreen()
 
 
 class UserInterface(object):
     def __init__(self, think_thread, task_queue, result_queue):
         pygame.init()
         pygame.mixer.init()
-        self.window = pygame.display.set_mode((1280, 768)) # , pygame.RESIZABLE)
+        self.window = pygame.display.set_mode((1280, 768), pygame.FULLSCREEN | pygame.SCALED) # , pygame.RESIZABLE)
         pygame.display.set_caption("Connect Four - v%s" % __version__)
         pygame.display.set_icon(pygame.image.load("assets/icon.png"))
 
