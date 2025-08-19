@@ -61,15 +61,13 @@ class Disc(object):
         self.x = x
         self.y = y
         self.color = color
+        self.frames_scale = 6
         self.frame_n = 0
-
-    def frames(self):
-        return (self.y + 1) * 60
 
     def get_frame(self):
         self.frame_n += 1
-        if self.frame_n <= (self.y + 1) * 2:
-            return self.color, self.x, (self.frame_n - 1) * self.y / ((self.y + 1) * 2)
+        if self.frame_n <= (self.y + 1) * self.frames_scale:
+            return self.color, self.x, (self.frame_n - 1) * self.y / ((self.y + 1) * self.frames_scale)
         return None, self.x, self.y
 
 
@@ -491,46 +489,47 @@ class Game(object):
                 elif self.board[y][x] == self.yellow:
                     window.blit(self.yellow_disc_small, (offset_x + x * 128, offset_y + y * 128))
                 window.blit(self.board_part, (offset_x + x * 128, offset_y + y * 128))
-                pygame.draw.rect(window, red if self.turn == self.red else yellow, (offset_x + self.cursor_x * 128, offset_y, 128, 768), 5)
-                window.blit(self.red_disc_small, (offset_x + 7 * 128, offset_y + 0 * 128))
 
-                red_win_stats = self.stats_font.render(": %s %s" % (self.stats[self.red], "WIN" if self.over and self.win == self.red else ""), True, red)
-                window.blit(red_win_stats, (offset_x + 7 * 128 + 128, offset_y + 0 * 128 + 48))
-                
-                window.blit(self.yellow_disc_small, (offset_x + 7 * 128, offset_y + 1 * 128))
-                tie_stats = self.stats_font.render(": %s %s" % (self.stats[self.empty], "TIE" if self.over and self.win == self.empty else ""), True, (0, 0, 0))
-                window.blit(tie_stats, (offset_x + 7 * 128 + 128, offset_y + 0 * 128 + 112))
+        pygame.draw.rect(window, red if self.turn == self.red else yellow, (offset_x + self.cursor_x * 128, offset_y, 128, 768), 5)
+        window.blit(self.red_disc_small, (offset_x + 7 * 128, offset_y + 0 * 128))
 
-                yellow_win_stats = self.stats_font.render(": %s %s" % (self.stats[self.yellow], "WIN" if self.over and self.win == self.yellow else ""), True, yellow)
-                window.blit(yellow_win_stats, (offset_x + 7 * 128 + 128, offset_y + 1 * 128 + 48))
+        red_win_stats = self.stats_font.render(": %s %s" % (self.stats[self.red], "WIN" if self.over and self.win == self.red else ""), True, red)
+        window.blit(red_win_stats, (offset_x + 7 * 128 + 128, offset_y + 0 * 128 + 48))
+        
+        window.blit(self.yellow_disc_small, (offset_x + 7 * 128, offset_y + 1 * 128))
+        tie_stats = self.stats_font.render(": %s %s" % (self.stats[self.empty], "TIE" if self.over and self.win == self.empty else ""), True, (0, 0, 0))
+        window.blit(tie_stats, (offset_x + 7 * 128 + 128, offset_y + 0 * 128 + 112))
 
-                if self.thinking:
-                    if self.turn == self.red:
-                        thinking = self.stats_font.render("thinking", True, red)
-                        window.blit(thinking, (offset_x + 7 * 128 + 20, offset_y + 2 * 128 + 10))
-                    else:
-                        thinking = self.stats_font.render("thinking", True, yellow)
-                        window.blit(thinking, (offset_x + 7 * 128 + 20, offset_y + 2 * 128 + 10))
+        yellow_win_stats = self.stats_font.render(": %s %s" % (self.stats[self.yellow], "WIN" if self.over and self.win == self.yellow else ""), True, yellow)
+        window.blit(yellow_win_stats, (offset_x + 7 * 128 + 128, offset_y + 1 * 128 + 48))
 
-                think_title = self.stats_font.render("CPU think:", True, (0, 0, 0))
-                window.blit(think_title, (offset_x + 7 * 128 + 5, offset_y + 3 * 128))
-                think_time = self.stats_font.render(" use: %.2fms" % (self.think_use_time * 1000.0), True, (0, 0, 0))
-                window.blit(think_time, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 48))
-                think_red = self.stats_font.render(" red: %d/%d" % (self.think[self.red], self.think_games), True, (0, 0, 0))
-                window.blit(think_red, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 96))
-                think_yellow = self.stats_font.render(" yellow: %d/%d" % (self.think[self.yellow], self.think_games), True, (0, 0, 0))
-                window.blit(think_yellow, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 144))
-                think_tie = self.stats_font.render(" tie: %d/%d" % (self.think[self.empty], self.think_games), True, (0, 0, 0))
-                window.blit(think_tie, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 192))
+        if self.thinking:
+            if self.turn == self.red:
+                thinking = self.stats_font.render("thinking", True, red)
+                window.blit(thinking, (offset_x + 7 * 128 + 20, offset_y + 2 * 128 + 10))
+            else:
+                thinking = self.stats_font.render("thinking", True, yellow)
+                window.blit(thinking, (offset_x + 7 * 128 + 20, offset_y + 2 * 128 + 10))
 
-                help_info = self.info_font.render("left or right to switch column", True, green)
-                window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 300))
-                help_info = self.info_font.render("enter to place disc", True, green)
-                window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 320))
-                help_info = self.info_font.render("r to restart", True, green)
-                window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 340))
-                help_info = self.info_font.render("esc back to menu", True, green)
-                window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 360))
+        think_title = self.stats_font.render("CPU think:", True, (0, 0, 0))
+        window.blit(think_title, (offset_x + 7 * 128 + 5, offset_y + 3 * 128))
+        think_time = self.stats_font.render(" use: %.2fms" % (self.think_use_time * 1000.0), True, (0, 0, 0))
+        window.blit(think_time, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 48))
+        think_red = self.stats_font.render(" red: %d/%d" % (self.think[self.red], self.think_games), True, (0, 0, 0))
+        window.blit(think_red, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 96))
+        think_yellow = self.stats_font.render(" yellow: %d/%d" % (self.think[self.yellow], self.think_games), True, (0, 0, 0))
+        window.blit(think_yellow, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 144))
+        think_tie = self.stats_font.render(" tie: %d/%d" % (self.think[self.empty], self.think_games), True, (0, 0, 0))
+        window.blit(think_tie, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 192))
+
+        help_info = self.info_font.render("left or right to switch column", True, green)
+        window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 300))
+        help_info = self.info_font.render("enter to place disc", True, green)
+        window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 320))
+        help_info = self.info_font.render("r to restart", True, green)
+        window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 340))
+        help_info = self.info_font.render("esc back to menu", True, green)
+        window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 360))
 
 
     def process_game_input(self, quit):
@@ -596,7 +595,7 @@ class UserInterface(object):
     def run(self):
         while self.running:
             self.process_input()
-            self.render()               
+            self.render()
             self.clock.tick(60)
 
 if __name__ == "__main__":
