@@ -46,6 +46,7 @@ class ThinkThread(StoppableThread):
                             y = self.game.drop_disc(x)
                             if y != -1:
                                 self.game.dropping = True
+                                self.game.cursor_x = x
                             # self.game.turn_place_disc(x)
                             self.game.thinking = False
                         else:
@@ -469,7 +470,7 @@ class Game(object):
         green = (81, 146, 3)
         offset_x = 0
         offset_y = 0
-        window.fill((220,220,220))
+        window.fill((180,180,180))
         if self.dropping:
             color, x, y = self.disc.get_frame()
             if color == self.red:
