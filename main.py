@@ -6,6 +6,8 @@ import threading
 from threading import Thread
 from queue import Queue, Empty
 
+__version__ = "1.2.0"
+
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 TaskQueue = Queue(5)
@@ -565,7 +567,7 @@ class UserInterface(object):
         pygame.init()
         pygame.mixer.init()
         self.window = pygame.display.set_mode((1280, 768)) # , pygame.RESIZABLE)
-        pygame.display.set_caption("Connect Four")
+        pygame.display.set_caption("Connect Four - v%s" % __version__)
         pygame.display.set_icon(pygame.image.load("assets/icon.png"))
 
         self.game = Game(task_queue = task_queue, result_queue = result_queue)
