@@ -1,5 +1,6 @@
 # Connect Four Game
 A Connect Four game developed using Pygame and Python.
+
 It supports single player mode and two players mode.
 
 # Screenshots
