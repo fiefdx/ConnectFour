@@ -40,7 +40,11 @@ class ThinkThread(StoppableThread):
                         turn = self.task_queue.get(block = False)
                         if self.game is not None and turn:
                             x = self.game.choose_best_move()
-                            self.game.turn_place_disc(x)
+                            # self.game.dropping = True
+                            y = self.game.drop_disc(x)
+                            if y != -1:
+                                self.game.dropping = True
+                            # self.game.turn_place_disc(x)
                             self.game.thinking = False
                         else:
                             time.sleep(0.1)
@@ -50,6 +54,23 @@ class ThinkThread(StoppableThread):
                     break
         except Exception as e:
             print(e)
+
+
+class Disc(object):
+    def __init__(self, color, x, y):
+        self.x = x
+        self.y = y
+        self.color = color
+        self.frame_n = 0
+
+    def frames(self):
+        return (self.y + 1) * 60
+
+    def get_frame(self):
+        self.frame_n += 1
+        if self.frame_n <= (self.y + 1) * 2:
+            return self.color, self.x, (self.frame_n - 1) * self.y / ((self.y + 1) * 2)
+        return None, self.x, self.y
 
 
 class Game(object):
@@ -75,6 +96,8 @@ class Game(object):
         self.think_use_time = 0
         self.thinking = False
         self.mode = mode
+        self.disc = Disc(self.red, 0, -1)
+        self.dropping = False
         self.think = {self.red: 0, self.yellow: 0, self.empty: 0}
         self.stats = {self.red: 0, self.yellow: 0, self.empty: 0}
         self.menu_play_mode = ["play red", "play yellow", "two players"]
@@ -358,7 +381,6 @@ class Game(object):
         offset_x = 0
         offset_y = 0
         y = 100
-        # window.fill((62,109,249))
         window.fill((54, 88, 156))
         title = self.title_font.render("Connect Four", True, (0, 0, 0))
         x = (window.get_width() - title.get_width()) // 2
@@ -410,8 +432,6 @@ class Game(object):
                     if self.mode == "play yellow":
                         self.thinking = True
                         self.task_queue.put(self.turn, block = True)
-                        # x = self.choose_best_move()
-                        # self.turn_place_disc(x)
                 elif event.key == pygame.K_LEFT:
                     if self.menu_idx == 0:
                         self.menu_play_mode_idx -= 1
@@ -450,6 +470,19 @@ class Game(object):
         yellow_disc = pygame.image.load("assets/disc-yellow.png")
         red_disc_small = pygame.image.load("assets/disc-red-small.png")
         yellow_disc_small = pygame.image.load("assets/disc-yellow-small.png")
+        if self.dropping:
+            color, x, y = self.disc.get_frame()
+            if color == self.red:
+                window.blit(red_disc_small, (offset_x + x * 128, offset_y + y * 128))
+            elif color == self.yellow:
+                window.blit(yellow_disc_small, (offset_x + x * 128, offset_y + y * 128))
+            else:
+                self.turn_place_disc(x)
+                self.dropping = False
+                if not self.over and ((self.mode == "play red" and self.turn == self.yellow) or (self.mode == "play yellow" and self.turn == self.red)):
+                    self.thinking = True
+                    self.task_queue.put(self.turn, block = True)
+
         for y in range(6):
             for x in range(7):
                 if self.board[y][x] == self.red:
@@ -509,20 +542,15 @@ class Game(object):
                 if event.key == pygame.K_ESCAPE:
                     self.mode = "menu"
                 elif event.key == pygame.K_RETURN:
-                    if not self.over and not self.thinking:
-                        self.turn_place_disc(self.cursor_x)
-                        if not self.over and (self.mode == "play red" or self.mode == "play yellow"):
-                            self.thinking = True
-                            self.task_queue.put(self.turn, block = True)
-                            # x = self.choose_best_move()
-                            # self.turn_place_disc(x)
+                    if not self.over and not self.thinking and not self.dropping:
+                        y = self.drop_disc(self.cursor_x)
+                        if y != -1:
+                            self.dropping = True
                 elif event.key == pygame.K_r:
                     self.restart()
                     if self.mode == "play yellow":
                         self.thinking = True
                         self.task_queue.put(self.turn, block = True)
-                        # x = self.choose_best_move()
-                        # self.turn_place_disc(x)
                 elif event.key == pygame.K_LEFT:
                     self.cursor_x -= 1
                     if self.cursor_x <= 0:
