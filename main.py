@@ -6,7 +6,7 @@ import threading
 from threading import Thread
 from queue import Queue, Empty
 
-__version__ = "1.2.1"
+__version__ = "1.3.0"
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
@@ -109,7 +109,7 @@ class Game(object):
         self.cursor_x = 0
         self.task_queue = task_queue
         self.result_queue = result_queue
-        self.sound_effect = pygame.mixer.Sound("audio/sound.mp3")
+        self.sound_effect = pygame.mixer.Sound("assets/audio/sound.mp3")
         self.red_disc_small = pygame.image.load("assets/disc-red-small.png")
         self.yellow_disc_small = pygame.image.load("assets/disc-yellow-small.png")
         self.board_part = pygame.image.load("assets/board-part.png")
