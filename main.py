@@ -95,13 +95,15 @@ class Game(object):
         self.win = self.empty
         self.think_games = think_games
         self.think_use_time = 0
+        self.think_games_red = think_games
+        self.think_games_yellow = think_games
         self.thinking = False
         self.mode = mode
         self.disc = Disc(self.red, 0, -1)
         self.dropping = False
         self.think = {self.red: 0, self.yellow: 0, self.empty: 0}
         self.stats = {self.red: 0, self.yellow: 0, self.empty: 0}
-        self.menu_play_mode = ["play red", "play yellow", "two players"]
+        self.menu_play_mode = ["play red", "play yellow", "two players", "watching"]
         self.menu_defficulty_mode = [10, 20, 30, 50, 100, 200, 500, 1000]
         self.menu_idx = 0
         self.menu_play_mode_idx = 0
@@ -532,6 +534,9 @@ class Game(object):
         think_tie = self.stats_font.render(" tie: %d/%d" % (self.think[self.empty], self.think_games), True, (0, 0, 0))
         window.blit(think_tie, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 192))
 
+        if self.mode == "watching":
+            help_info = self.info_font.render("up or down to change CPUs levels", True, green)
+            window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 260))
         help_info = self.info_font.render("left or right to switch column", True, green)
         window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 280))
         help_info = self.info_font.render("enter to place disc", True, green)
