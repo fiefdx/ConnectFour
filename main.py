@@ -594,9 +594,9 @@ class Game(object):
                     if self.mode == "play yellow":
                         self.thinking = True
                         self.task_queue.put(self.turn, block = True)
-                    elif self.mode == "watching":
-                        self.thinking = True
-                        self.task_queue.put(self.turn, block = True)
+                    # elif self.mode == "watching":
+                    #     self.thinking = True
+                    #     self.task_queue.put(self.turn, block = True)
                 elif event.key == pygame.K_LEFT:
                     self.cursor_x -= 1
                     if self.cursor_x <= 0:
