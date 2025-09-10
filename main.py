@@ -439,6 +439,9 @@ class Game(object):
                 elif event.key == pygame.K_RETURN:
                     self.mode = self.menu_play_mode[self.menu_play_mode_idx]
                     self.think_games = self.menu_defficulty_mode[self.menu_difficulty_idx]
+                    if self.mode == "watching":
+                        self.think_games_red = self.menu_defficulty_mode[self.menu_difficulty_idx]
+                        self.think_games_yellow = self.menu_defficulty_mode[self.menu_difficulty_idx]
                     self.restart()
                     self.stats = {self.red: 0, self.yellow: 0, self.empty: 0}
                     if self.mode == "play yellow":
@@ -507,6 +510,10 @@ class Game(object):
 
         red_win_stats = self.stats_font.render(": %s %s" % (self.stats[self.red], "WIN" if self.over and self.win == self.red else ""), True, red)
         window.blit(red_win_stats, (offset_x + 7 * 128 + 128, offset_y + 0 * 128 + 48))
+        if self.mode == "watching":
+            red_think_level = self.stats_font.render(str(self.think_games_red), True, green)
+            x = (128 - red_think_level.get_width()) // 2
+            window.blit(red_think_level, (offset_x + 7 * 128 + x, offset_y + 0 * 128 + 48))
         
         window.blit(self.yellow_disc_small, (offset_x + 7 * 128, offset_y + 1 * 128))
         tie_stats = self.stats_font.render(": %s %s" % (self.stats[self.empty], "TIE" if self.over and self.win == self.empty else ""), True, (0, 0, 0))
@@ -514,6 +521,10 @@ class Game(object):
 
         yellow_win_stats = self.stats_font.render(": %s %s" % (self.stats[self.yellow], "WIN" if self.over and self.win == self.yellow else ""), True, yellow)
         window.blit(yellow_win_stats, (offset_x + 7 * 128 + 128, offset_y + 1 * 128 + 48))
+        if self.mode == "watching":
+            yellow_think_level = self.stats_font.render(str(self.think_games_yellow), True, green)
+            x = (128 - yellow_think_level.get_width()) // 2
+            window.blit(yellow_think_level, (offset_x + 7 * 128 + x, offset_y + 1 * 128 + 48))
 
         if self.thinking:
             if self.turn == self.red:
