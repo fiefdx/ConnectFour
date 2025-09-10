@@ -96,7 +96,9 @@ class Game(object):
         self.think_games = think_games
         self.think_use_time = 0
         self.think_games_red = think_games
+        self.difficulty_idx_red = 0
         self.think_games_yellow = think_games
+        self.difficulty_idx_yellow = 0
         self.thinking = False
         self.mode = mode
         self.disc = Disc(self.red, 0, -1)
@@ -456,6 +458,8 @@ class Game(object):
                         self.menu_difficulty_idx -= 1
                         if self.menu_difficulty_idx <= 0:
                             self.menu_difficulty_idx = 0
+                        self.difficulty_idx_red = self.menu_difficulty_idx
+                        self.difficulty_idx_yellow = self.menu_difficulty_idx
                 elif event.key == pygame.K_RIGHT:
                     if self.menu_idx == 0:
                         self.menu_play_mode_idx += 1
@@ -465,6 +469,8 @@ class Game(object):
                         self.menu_difficulty_idx += 1
                         if self.menu_difficulty_idx >= len(self.menu_defficulty_mode) - 1:
                             self.menu_difficulty_idx = len(self.menu_defficulty_mode) - 1
+                        self.difficulty_idx_red = self.menu_difficulty_idx
+                        self.difficulty_idx_yellow = self.menu_difficulty_idx
                 elif event.key == pygame.K_UP:
                     self.menu_idx -= 1
                     if self.menu_idx < 0:
@@ -559,7 +565,6 @@ class Game(object):
         help_info = self.info_font.render("esc back to menu", True, green)
         window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 360))
 
-
     def process_game_input(self, quit):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -588,6 +593,16 @@ class Game(object):
                         self.cursor_x = 6
                 elif event.key == pygame.K_f:
                     pygame.display.toggle_fullscreen()
+                elif event.key == pygame.K_UP:
+                    self.difficulty_idx_red += 1
+                    if self.difficulty_idx_red >= len(self.menu_defficulty_mode):
+                        self.difficulty_idx_red = 0
+                    self.think_games_red = self.menu_defficulty_mode[self.difficulty_idx_red]
+                elif event.key == pygame.K_DOWN:
+                    self.difficulty_idx_yellow += 1
+                    if self.difficulty_idx_yellow >= len(self.menu_defficulty_mode):
+                        self.difficulty_idx_yellow = 0
+                    self.think_games_yellow = self.menu_defficulty_mode[self.difficulty_idx_yellow]
 
 
 class UserInterface(object):
