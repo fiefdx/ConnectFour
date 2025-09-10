@@ -1,4 +1,6 @@
 import os
+import sys
+import traceback
 import time
 import random
 import pygame
@@ -110,7 +112,7 @@ class Game(object):
         self.think = {self.red: 0, self.yellow: 0, self.empty: 0}
         self.stats = {self.red: 0, self.yellow: 0, self.empty: 0}
         self.menu_play_mode = ["play red", "play yellow", "two players", "watching"]
-        self.menu_defficulty_mode = [10, 20, 30, 50, 100, 200, 500, 1000]
+        self.menu_defficulty_mode = [10, 20, 30, 50, 100, 200, 500, 1000, 2000, 5000]
         self.menu_idx = 0
         self.menu_play_mode_idx = 0
         self.menu_difficulty_idx = 0
@@ -347,19 +349,30 @@ class Game(object):
             stats = {}
             g = Game()
             for x in xs:
-                stats[x] = {self.red: 0, self.yellow: 0, self.empty: 0}
+                stats[x] = {self.red: 0, self.yellow: 0, self.empty: 0, "fast_over": {self.red: 42, self.yellow: 42, self.empty: 42}}
                 for i in range(self.think_games):
+                    n = 0
                     g.copy_from(self)
                     g.turn_place_disc(x)
                     while not g.over:
                         g.turn_random_place_disc()
+                        n += 1
                     stats[x][g.win] += 1
+                    if n < stats[x]["fast_over"][g.win]:
+                        stats[x]["fast_over"][g.win] = n
             max_win = stats[xs[0]][self.turn]
+            fast_lose = stats[xs[0]]["fast_over"][self.red if self.turn == self.yellow else self.yellow]
             best_x = xs[0]
             for x in xs[1:]:
-                if stats[x][self.turn] > max_win: # or (stats[x][self.turn] == max_win and stats[x][self.empty] > stats[best_x][self.empty]):
+                if fast_lose == 1:
                     max_win = stats[x][self.turn]
+                    fast_lose = stats[x]["fast_over"][self.red if self.turn == self.yellow else self.yellow]
                     best_x = x
+                else:
+                    if stats[x][self.turn] > max_win and stats[x]["fast_over"][self.red if self.turn == self.yellow else self.yellow] != 1: # or (stats[x][self.turn] == max_win and stats[x][self.empty] > stats[best_x][self.empty]):
+                        max_win = stats[x][self.turn]
+                        fast_lose = stats[x]["fast_over"][self.red if self.turn == self.yellow else self.yellow]
+                        best_x = x
             self.think[self.red] = stats[best_x][self.red]
             self.think[self.yellow] = stats[best_x][self.yellow]
             self.think[self.empty] = stats[best_x][self.empty]
@@ -445,9 +458,8 @@ class Game(object):
                 elif event.key == pygame.K_RETURN:
                     self.mode = self.menu_play_mode[self.menu_play_mode_idx]
                     self.think_games = self.menu_defficulty_mode[self.menu_difficulty_idx]
-                    if self.mode == "watching":
-                        self.think_games_red = self.menu_defficulty_mode[self.menu_difficulty_idx]
-                        self.think_games_yellow = self.menu_defficulty_mode[self.menu_difficulty_idx]
+                    self.think_games_red = self.menu_defficulty_mode[self.menu_difficulty_idx]
+                    self.think_games_yellow = self.menu_defficulty_mode[self.menu_difficulty_idx]
                     self.restart()
                     self.stats = {self.red: 0, self.yellow: 0, self.empty: 0}
                     if self.mode == "play yellow":
