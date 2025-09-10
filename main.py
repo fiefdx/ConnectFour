@@ -41,6 +41,10 @@ class ThinkThread(StoppableThread):
                     try:
                         turn = self.task_queue.get(block = False)
                         if self.game is not None and turn:
+                            if turn == 1:
+                                self.game.think_games = self.game.think_games_red
+                            elif turn == 2:
+                                self.game.think_games = self.game.think_games_yellow
                             x = self.game.choose_best_move()
                             # self.game.dropping = True
                             y = self.game.drop_disc(x)
@@ -449,9 +453,9 @@ class Game(object):
                     if self.mode == "play yellow":
                         self.thinking = True
                         self.task_queue.put(self.turn, block = True)
-                    elif self.mode == "watching":
-                        self.thinking = True
-                        self.task_queue.put(self.turn, block = True)
+                    # elif self.mode == "watching":
+                    #     self.thinking = True
+                    #     self.task_queue.put(self.turn, block = True)
                 elif event.key == pygame.K_LEFT:
                     if self.menu_idx == 0:
                         self.menu_play_mode_idx -= 1
