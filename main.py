@@ -449,6 +449,9 @@ class Game(object):
                     if self.mode == "play yellow":
                         self.thinking = True
                         self.task_queue.put(self.turn, block = True)
+                    elif self.mode == "watching":
+                        self.thinking = True
+                        self.task_queue.put(self.turn, block = True)
                 elif event.key == pygame.K_LEFT:
                     if self.menu_idx == 0:
                         self.menu_play_mode_idx -= 1
@@ -575,12 +578,19 @@ class Game(object):
                     self.mode = "menu"
                 elif event.key == pygame.K_RETURN:
                     if not self.over and not self.thinking and not self.dropping:
-                        y = self.drop_disc(self.cursor_x)
-                        if y != -1:
-                            self.dropping = True
+                        if self.mode == "watching":
+                            self.thinking = True
+                            self.task_queue.put(self.turn, block = True)
+                        else:
+                            y = self.drop_disc(self.cursor_x)
+                            if y != -1:
+                                self.dropping = True
                 elif event.key == pygame.K_r:
                     self.restart()
                     if self.mode == "play yellow":
+                        self.thinking = True
+                        self.task_queue.put(self.turn, block = True)
+                    elif self.mode == "watching":
                         self.thinking = True
                         self.task_queue.put(self.turn, block = True)
                 elif event.key == pygame.K_LEFT:
@@ -603,7 +613,6 @@ class Game(object):
                     if self.difficulty_idx_yellow >= len(self.menu_defficulty_mode):
                         self.difficulty_idx_yellow = 0
                     self.think_games_yellow = self.menu_defficulty_mode[self.difficulty_idx_yellow]
-
 
 class UserInterface(object):
     def __init__(self, think_thread, task_queue, result_queue):
