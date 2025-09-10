@@ -123,6 +123,7 @@ class Game(object):
         self.red_disc_small = pygame.image.load("assets/disc-red-small.png")
         self.yellow_disc_small = pygame.image.load("assets/disc-yellow-small.png")
         self.board_part = pygame.image.load("assets/board-part.png")
+        self.auto_mode = False
 
     def is_full(self):
         return self.discs_counter >= 42
@@ -543,6 +544,10 @@ class Game(object):
         window.blit(self.yellow_disc_small, (offset_x + 7 * 128, offset_y + 1 * 128))
         tie_stats = self.stats_font.render(": %s %s" % (self.stats[self.empty], "TIE" if self.over and self.win == self.empty else ""), True, (0, 0, 0))
         window.blit(tie_stats, (offset_x + 7 * 128 + 128, offset_y + 0 * 128 + 112))
+        if self.mode == "watching":
+            auto_mode = self.stats_font.render("Auto" if self.auto_mode else "Manual", True, green)
+            x = (128 - auto_mode.get_width()) // 2
+            window.blit(auto_mode, (offset_x + 8 * 128 + 96 + x, offset_y + 10))
 
         yellow_win_stats = self.stats_font.render(": %s %s" % (self.stats[self.yellow], "WIN" if self.over and self.win == self.yellow else ""), True, yellow)
         window.blit(yellow_win_stats, (offset_x + 7 * 128 + 128, offset_y + 1 * 128 + 48))
@@ -571,18 +576,20 @@ class Game(object):
         window.blit(think_tie, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 192))
 
         if self.mode == "watching":
+            help_info = self.info_font.render("space to toggle auto or manual mode", True, green)
+            window.blit(help_info, (offset_x + 7 * 128 + 2, offset_y + 3 * 128 + 240))
             help_info = self.info_font.render("up or down to change CPUs levels", True, green)
-            window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 260))
+            window.blit(help_info, (offset_x + 7 * 128 + 2, offset_y + 3 * 128 + 260))
         help_info = self.info_font.render("left or right to switch column", True, green)
-        window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 280))
+        window.blit(help_info, (offset_x + 7 * 128 + 2, offset_y + 3 * 128 + 280))
         help_info = self.info_font.render("enter to place disc", True, green)
-        window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 300))
+        window.blit(help_info, (offset_x + 7 * 128 + 2, offset_y + 3 * 128 + 300))
         help_info = self.info_font.render("r to restart", True, green)
-        window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 320))
+        window.blit(help_info, (offset_x + 7 * 128 + 2, offset_y + 3 * 128 + 320))
         help_info = self.info_font.render("f to toggle fullscreen or windowed", True, green)
-        window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 340))
+        window.blit(help_info, (offset_x + 7 * 128 + 2, offset_y + 3 * 128 + 340))
         help_info = self.info_font.render("esc back to menu", True, green)
-        window.blit(help_info, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 360))
+        window.blit(help_info, (offset_x + 7 * 128 + 2, offset_y + 3 * 128 + 360))
 
     def process_game_input(self, quit):
         for event in pygame.event.get():
@@ -595,8 +602,9 @@ class Game(object):
                 elif event.key == pygame.K_RETURN:
                     if not self.over and not self.thinking and not self.dropping:
                         if self.mode == "watching":
-                            self.thinking = True
-                            self.task_queue.put(self.turn, block = True)
+                            if not self.auto_mode:
+                                self.thinking = True
+                                self.task_queue.put(self.turn, block = True)
                         else:
                             y = self.drop_disc(self.cursor_x)
                             if y != -1:
@@ -629,6 +637,8 @@ class Game(object):
                     if self.difficulty_idx_yellow >= len(self.menu_defficulty_mode):
                         self.difficulty_idx_yellow = 0
                     self.think_games_yellow = self.menu_defficulty_mode[self.difficulty_idx_yellow]
+                elif event.key == pygame.K_SPACE:
+                    self.auto_mode = not self.auto_mode
 
 class UserInterface(object):
     def __init__(self, think_thread, task_queue, result_queue):
