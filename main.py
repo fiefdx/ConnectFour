@@ -592,6 +592,16 @@ class Game(object):
         window.blit(help_info, (offset_x + 7 * 128 + 2, offset_y + 3 * 128 + 360))
 
     def process_game_input(self, quit):
+        if self.mode == "watching":
+            if not self.over:
+                if self.auto_mode:
+                    if not self.thinking and not self.dropping:
+                        self.thinking = True
+                        self.task_queue.put(self.turn, block = True)
+            else:
+                if self.auto_mode and not self.thinking and not self.dropping:
+                    self.restart()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit()
