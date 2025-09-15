@@ -652,11 +652,11 @@ class Game(object):
         window.blit(think_title, (offset_x + 7 * 128 + 5, offset_y + 3 * 128))
         think_time = self.stats_font.render(" use: %.2fms" % (self.think_use_time * 1000.0), True, (0, 0, 0))
         window.blit(think_time, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 48))
-        think_red = self.stats_font.render(" red: %d/%d" % (self.think[self.red], self.think_games), True, (0, 0, 0))
+        think_red = self.stats_font.render(" red: %d" % (self.think[self.red], ), True, (0, 0, 0))
         window.blit(think_red, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 96))
-        think_yellow = self.stats_font.render(" yellow: %d/%d" % (self.think[self.yellow], self.think_games), True, (0, 0, 0))
+        think_yellow = self.stats_font.render(" yellow: %d" % (self.think[self.yellow], ), True, (0, 0, 0))
         window.blit(think_yellow, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 144))
-        think_tie = self.stats_font.render(" tie: %d/%d" % (self.think[self.empty], self.think_games), True, (0, 0, 0))
+        think_tie = self.stats_font.render(" tie: %d" % (self.think[self.empty], ), True, (0, 0, 0))
         window.blit(think_tie, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 192))
 
         if self.mode == "watching":
