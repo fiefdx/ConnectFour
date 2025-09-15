@@ -1,6 +1,7 @@
 import os
 import sys
 import traceback
+import math
 import time
 import random
 import pygame
@@ -112,7 +113,7 @@ class Game(object):
         self.think = {self.red: 0, self.yellow: 0, self.empty: 0}
         self.stats = {self.red: 0, self.yellow: 0, self.empty: 0}
         self.menu_play_mode = ["play red", "play yellow", "two players", "watching"]
-        self.menu_defficulty_mode = [10, 20, 30, 50, 100, 200, 500, 1000, 2000, 5000]
+        self.menu_defficulty_mode = [10, 20, 30, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 50000]
         self.menu_idx = 0
         self.menu_play_mode_idx = 0
         self.menu_difficulty_idx = 0
@@ -135,6 +136,12 @@ class Game(object):
                 return y
         return -1
 
+    def exists_place_y(self, x):
+        for y in range(6):
+            if self.board[y][x] != self.empty:
+                return y
+        return -1
+
     def available_place_xs(self):
         r = []
         for i, x in enumerate(self.board[0]):
@@ -147,6 +154,16 @@ class Game(object):
         if y != -1:
             self.board[y][x] = color
             self.discs_counter += 1
+            self.steps += str(x)
+            return y
+        return -1
+
+    def remove_disc(self, x):
+        y = self.exists_place_y(x)
+        if y != -1:
+            self.board[y][x] = self.empty
+            self.discs_counter -= 1
+            self.steps = self.steps[:-1]
             return y
         return -1
 
@@ -276,11 +293,11 @@ class Game(object):
     def turn_place_disc(self, x):
         y = self.place_disc(x, self.turn)
         if y != -1:
-            if self.turn == self.red:
-                self.turn = self.yellow
-            else:
-                self.turn = self.red
-            self.steps += str(x)
+            # if self.turn == self.red:
+            #     self.turn = self.yellow
+            # else:
+            #     self.turn = self.red
+            self.turn = self.red if self.discs_counter % 2 == 0 else self.yellow
             win = self.check_status(x, y)
             if win != self.empty:
                 self.over = True
@@ -354,6 +371,40 @@ class Game(object):
         self.turn_place_disc(x)
         return x
 
+    def recursive_turn_place_disc(self, stats_x, n = 0, target = 1000):
+        result = 0
+        if self.over:
+            stats_x[self.win] += 1
+            stats_x["total"] += 1
+            stats_x["steps"][self.steps] = True
+            if n < stats_x["fast_over"][self.win]:
+                stats_x["fast_over"][self.win] = n
+            result = 1
+            self.win = self.empty
+            self.over = False
+        else:
+            x = self.check_win_move()
+            if x == -1:
+                x = self.check_defensive_move()
+                if x == -1:
+                    xs = self.available_place_xs()
+                    random.shuffle(xs)
+                    for x in xs:
+                        self.turn_place_disc(x)
+                        result += self.recursive_turn_place_disc(stats_x, n = n + 1, target = math.ceil(target / len(xs)))
+                        self.remove_disc(x)
+                        if result >= target:
+                            break
+                else:
+                    self.turn_place_disc(x)
+                    result += self.recursive_turn_place_disc(stats_x, n = n + 1, target = target)
+                    self.remove_disc(x)
+            else:
+                self.turn_place_disc(x)
+                result += self.recursive_turn_place_disc(stats_x, n = n + 1, target = target)
+                self.remove_disc(x)
+        return result
+
     def choose_best_move(self):
         t = time.time()
         # if self.discs_counter < 2:
@@ -366,22 +417,25 @@ class Game(object):
             stats = {}
             g = Game()
             for x in xs:
-                stats[x] = {self.red: 0, self.yellow: 0, self.empty: 0, "fast_over": {self.red: 42, self.yellow: 42, self.empty: 42}, "steps": {}}
-                for i in range(self.think_games):
+                stats[x] = {self.red: 0, self.yellow: 0, self.empty: 0, "total": 0, "fast_over": {self.red: 42, self.yellow: 42, self.empty: 42}, "steps": {}}
+                # for i in range(self.think_games):
                     # k = ""
-                    n = 0
-                    g.copy_from(self)
-                    g.turn_place_disc(x)
-                    while not g.over:
-                        dx = g.turn_random_place_disc_return_x()
-                        # k += str(dx)
-                        n += 1
-                    if g.steps not in stats[x]["steps"]:
-                        print(g.steps)
-                        stats[x]["steps"][g.steps] = True
-                        stats[x][g.win] += 1
-                        if n < stats[x]["fast_over"][g.win]:
-                            stats[x]["fast_over"][g.win] = n
+                    # g.copy_from(self)
+                    # g.turn_place_disc(x)
+                    # n = 0
+                    # while not g.over:
+                    #     dx = g.turn_random_place_disc_return_x()
+                    #     # k += str(dx)
+                    #     n += 1
+                    # if g.steps not in stats[x]["steps"]:
+                    #     print(g.steps)
+                    #     stats[x]["steps"][g.steps] = True
+                    #     stats[x][g.win] += 1
+                    #     if n < stats[x]["fast_over"][g.win]:
+                    #         stats[x]["fast_over"][g.win] = n
+                g.copy_from(self)
+                g.turn_place_disc(x)
+                g.recursive_turn_place_disc(stats[x], n = 0, target = self.think_games)
             max_win = stats[xs[0]][self.turn]
             fast_lose = stats[xs[0]]["fast_over"][self.red if self.turn == self.yellow else self.yellow]
             best_x = xs[0]
@@ -428,6 +482,9 @@ class Game(object):
         self.over = game.over
         self.win = game.win
         self.steps = game.steps
+        self.think_games = game.think_games
+        self.think_games_red = game.think_games_red
+        self.think_games_yellow = game.think_games_yellow
 
     def render_menu(self, window):
         green = (81, 146, 3)
@@ -543,7 +600,7 @@ class Game(object):
                 window.blit(self.yellow_disc_small, (offset_x + x * 128, offset_y + y * 128))
             else:
                 self.turn_place_disc(x)
-                print("render: ", self.steps)
+                # print("render: ", self.steps)
                 self.sound_effect.play()
                 self.dropping = False
                 if not self.over and ((self.mode == "play red" and self.turn == self.yellow) or (self.mode == "play yellow" and self.turn == self.red)):
