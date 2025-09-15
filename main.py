@@ -338,10 +338,20 @@ class Game(object):
                 x = random.choice(xs)
         return self.turn_place_disc(x)
 
+    def turn_random_place_disc_return_x(self):
+        x = self.check_win_move()
+        if x == -1:
+            x = self.check_defensive_move()
+            if x == -1:
+                xs = self.available_place_xs()
+                x = random.choice(xs)
+        self.turn_place_disc(x)
+        return x
+
     def choose_best_move(self):
         t = time.time()
-        if self.discs_counter < 2:
-            return 3
+        # if self.discs_counter < 2:
+        #     return 3
         best_x = self.check_win_move()
         if best_x == -1:
             best_x = self.check_defensive_move()
@@ -350,21 +360,28 @@ class Game(object):
             stats = {}
             g = Game()
             for x in xs:
-                stats[x] = {self.red: 0, self.yellow: 0, self.empty: 0, "fast_over": {self.red: 42, self.yellow: 42, self.empty: 42}}
+                stats[x] = {self.red: 0, self.yellow: 0, self.empty: 0, "fast_over": {self.red: 42, self.yellow: 42, self.empty: 42}, "steps": {}}
                 for i in range(self.think_games):
+                    k = ""
                     n = 0
                     g.copy_from(self)
                     g.turn_place_disc(x)
                     while not g.over:
-                        g.turn_random_place_disc()
+                        dx = g.turn_random_place_disc_return_x()
+                        k += str(dx)
                         n += 1
-                    stats[x][g.win] += 1
-                    if n < stats[x]["fast_over"][g.win]:
-                        stats[x]["fast_over"][g.win] = n
+                    if k not in stats[x]["steps"]:
+                        stats[x]["steps"][k] = True
+                        stats[x][g.win] += 1
+                        if n < stats[x]["fast_over"][g.win]:
+                            stats[x]["fast_over"][g.win] = n
             max_win = stats[xs[0]][self.turn]
             fast_lose = stats[xs[0]]["fast_over"][self.red if self.turn == self.yellow else self.yellow]
             best_x = xs[0]
             for x in xs[1:]:
+                # if stats[x][self.turn] > max_win:
+                #     max_win = stats[x][self.turn]
+                #     best_x = x
                 if fast_lose == 1:
                     max_win = stats[x][self.turn]
                     fast_lose = stats[x]["fast_over"][self.red if self.turn == self.yellow else self.yellow]
