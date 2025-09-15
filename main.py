@@ -124,6 +124,7 @@ class Game(object):
         self.yellow_disc_small = pygame.image.load("assets/disc-yellow-small.png")
         self.board_part = pygame.image.load("assets/board-part.png")
         self.auto_mode = False
+        self.steps = ""
 
     def is_full(self):
         return self.discs_counter >= 42
@@ -279,6 +280,7 @@ class Game(object):
                 self.turn = self.yellow
             else:
                 self.turn = self.red
+            self.steps += str(x)
             win = self.check_status(x, y)
             if win != self.empty:
                 self.over = True
@@ -336,6 +338,8 @@ class Game(object):
             if x == -1:
                 xs = self.available_place_xs()
                 x = random.choice(xs)
+        # self.steps += str(x)
+        # print(self.steps)
         return self.turn_place_disc(x)
 
     def turn_random_place_disc_return_x(self):
@@ -345,6 +349,8 @@ class Game(object):
             if x == -1:
                 xs = self.available_place_xs()
                 x = random.choice(xs)
+        # self.steps += str(x)
+        # print(self.steps)
         self.turn_place_disc(x)
         return x
 
@@ -362,16 +368,17 @@ class Game(object):
             for x in xs:
                 stats[x] = {self.red: 0, self.yellow: 0, self.empty: 0, "fast_over": {self.red: 42, self.yellow: 42, self.empty: 42}, "steps": {}}
                 for i in range(self.think_games):
-                    k = ""
+                    # k = ""
                     n = 0
                     g.copy_from(self)
                     g.turn_place_disc(x)
                     while not g.over:
                         dx = g.turn_random_place_disc_return_x()
-                        k += str(dx)
+                        # k += str(dx)
                         n += 1
-                    if k not in stats[x]["steps"]:
-                        stats[x]["steps"][k] = True
+                    if g.steps not in stats[x]["steps"]:
+                        print(g.steps)
+                        stats[x]["steps"][g.steps] = True
                         stats[x][g.win] += 1
                         if n < stats[x]["fast_over"][g.win]:
                             stats[x]["fast_over"][g.win] = n
@@ -412,6 +419,7 @@ class Game(object):
         self.think[self.yellow] = 0
         self.think[self.empty] = 0
         self.think_use_time = 0
+        self.steps = ""
 
     def copy_from(self, game):
         self.turn = game.turn
@@ -419,6 +427,7 @@ class Game(object):
         self.board = [list(row) for row in game.board]
         self.over = game.over
         self.win = game.win
+        self.steps = game.steps
 
     def render_menu(self, window):
         green = (81, 146, 3)
@@ -534,6 +543,7 @@ class Game(object):
                 window.blit(self.yellow_disc_small, (offset_x + x * 128, offset_y + y * 128))
             else:
                 self.turn_place_disc(x)
+                print("render: ", self.steps)
                 self.sound_effect.play()
                 self.dropping = False
                 if not self.over and ((self.mode == "play red" and self.turn == self.yellow) or (self.mode == "play yellow" and self.turn == self.red)):
