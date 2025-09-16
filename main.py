@@ -1,6 +1,7 @@
 import os
 import sys
 import traceback
+import logging
 import math
 import time
 import random
@@ -8,6 +9,10 @@ import pygame
 import threading
 from threading import Thread
 from queue import Queue, Empty
+
+import logger
+
+LOG = logging.getLogger(__name__)
 
 __version__ = "1.3.2"
 
@@ -550,6 +555,7 @@ class Game(object):
                     self.think_mode_red = self.menu_think_mode[self.menu_think_mode_idx]
                     self.think_mode_yellow = self.menu_think_mode[self.menu_think_mode_idx]
                     self.restart()
+                    LOG.info("game start, mode: %s, red[%s]: %s, yellow[%s]: %s", self.mode, self.think_mode_red, self.think_games_red, self.think_mode_yellow, self.think_games_yellow)
                     self.stats = {self.red: 0, self.yellow: 0, self.empty: 0}
                     if self.mode == "play yellow":
                         self.thinking = True
@@ -623,6 +629,8 @@ class Game(object):
                 if not self.over and ((self.mode == "play red" and self.turn == self.yellow) or (self.mode == "play yellow" and self.turn == self.red)):
                     self.thinking = True
                     self.task_queue.put(self.turn, block = True)
+                if self.over:
+                    LOG.info("steps(%02d): %s", self.discs_counter, self.steps)
 
         for y in range(6):
             for x in range(7):
@@ -734,6 +742,7 @@ class Game(object):
                                 self.dropping = True
                 elif event.key == pygame.K_r:
                     self.restart()
+                    LOG.info("game start, mode: %s, red[%s]: %s, yellow[%s]: %s", self.mode, self.think_mode_red, self.think_games_red, self.think_mode_yellow, self.think_games_yellow)
                     if self.mode == "play yellow":
                         self.thinking = True
                         self.task_queue.put(self.turn, block = True)
@@ -755,21 +764,25 @@ class Game(object):
                     if self.difficulty_idx_red >= len(self.menu_difficulty_mode):
                         self.difficulty_idx_red = 0
                     self.think_games_red = self.menu_difficulty_mode[self.difficulty_idx_red]
+                    LOG.info("change settings, mode: %s, red[%s]: %s, yellow[%s]: %s", self.mode, self.think_mode_red, self.think_games_red, self.think_mode_yellow, self.think_games_yellow)
                 elif event.key == pygame.K_DOWN:
                     self.difficulty_idx_yellow += 1
                     if self.difficulty_idx_yellow >= len(self.menu_difficulty_mode):
                         self.difficulty_idx_yellow = 0
                     self.think_games_yellow = self.menu_difficulty_mode[self.difficulty_idx_yellow]
+                    LOG.info("change settings, mode: %s, red[%s]: %s, yellow[%s]: %s", self.mode, self.think_mode_red, self.think_games_red, self.think_mode_yellow, self.think_games_yellow)
                 elif event.key == pygame.K_t:
                     self.think_mode_idx_red += 1
                     if self.think_mode_idx_red >= len(self.menu_think_mode):
                         self.think_mode_idx_red = 0
                     self.think_mode_red = self.menu_think_mode[self.think_mode_idx_red]
+                    LOG.info("change settings, mode: %s, red[%s]: %s, yellow[%s]: %s", self.mode, self.think_mode_red, self.think_games_red, self.think_mode_yellow, self.think_games_yellow)
                 elif event.key == pygame.K_g:
                     self.think_mode_idx_yellow += 1
                     if self.think_mode_idx_yellow >= len(self.menu_think_mode):
                         self.think_mode_idx_yellow = 0
                     self.think_mode_yellow = self.menu_think_mode[self.think_mode_idx_yellow]
+                    LOG.info("change settings, mode: %s, red[%s]: %s, yellow[%s]: %s", self.mode, self.think_mode_red, self.think_games_red, self.think_mode_yellow, self.think_games_yellow)
                 elif event.key == pygame.K_SPACE:
                     self.auto_mode = not self.auto_mode
 
@@ -812,9 +825,20 @@ class UserInterface(object):
             self.clock.tick(60)
 
 if __name__ == "__main__":
+    logger.config_logging(file_name = "game.log",
+                          log_level = "INFO",
+                          dir_name = "logs",
+                          day_rotate = False,
+                          when = "D",
+                          interval = 1,
+                          max_size = 20,
+                          backup_count = 5,
+                          console = True)
+    LOG.info("start game")
     think = ThinkThread(TaskQueue, ResultQueue)
     think.start()
     UserInterface = UserInterface(think, TaskQueue, ResultQueue)
     UserInterface.run()
     think.join()
     pygame.quit()
+    LOG.info("end game")
