@@ -103,8 +103,13 @@ class Game(object):
         self.think_games = think_games
         self.think_use_time = 0
         self.think_games_red = think_games
-        self.difficulty_idx_red = 0
         self.think_games_yellow = think_games
+        self.think_mode = "mode1"
+        self.think_mode_red = "mode1"
+        self.think_mode_yellow = "mode1"
+        self.think_mode_idx_red = 0
+        self.think_mode_idx_yellow = 0
+        self.difficulty_idx_red = 0
         self.difficulty_idx_yellow = 0
         self.thinking = False
         self.mode = mode
@@ -113,10 +118,12 @@ class Game(object):
         self.think = {self.red: 0, self.yellow: 0, self.empty: 0}
         self.stats = {self.red: 0, self.yellow: 0, self.empty: 0}
         self.menu_play_mode = ["play red", "play yellow", "two players", "watching"]
-        self.menu_defficulty_mode = [10, 20, 30, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 50000]
+        self.menu_difficulty_mode = [10, 20, 30, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 50000]
+        self.menu_think_mode = ["mode1", "mode2"]
         self.menu_idx = 0
         self.menu_play_mode_idx = 0
         self.menu_difficulty_idx = 0
+        self.menu_think_mode_idx = 0
         self.cursor_x = 0
         self.task_queue = task_queue
         self.result_queue = result_queue
@@ -416,30 +423,32 @@ class Game(object):
             xs = self.available_place_xs()
             stats = {}
             g = Game()
-            for x in xs:
-                stats[x] = {self.red: 0, self.yellow: 0, self.empty: 0, "total": 0, "fast_over": {self.red: 42, self.yellow: 42, self.empty: 42}, "steps": {}}
-                # for i in range(self.think_games):
-                    # k = ""
-                    # g.copy_from(self)
-                    # g.turn_place_disc(x)
-                    # n = 0
-                    # while not g.over:
-                    #     dx = g.turn_random_place_disc_return_x()
-                    #     # k += str(dx)
-                    #     n += 1
-                    # if g.steps not in stats[x]["steps"]:
-                    #     print(g.steps)
-                    #     stats[x]["steps"][g.steps] = True
-                    #     stats[x][g.win] += 1
-                    #     if n < stats[x]["fast_over"][g.win]:
-                    #         stats[x]["fast_over"][g.win] = n
-                g.copy_from(self)
-                g.turn_place_disc(x)
-                g.recursive_turn_place_disc(stats[x], n = 0, target = self.think_games)
+            if self.think_mode == "mode1":
+                for x in xs:
+                    stats[x] = {self.red: 0, self.yellow: 0, self.empty: 0, "total": 0, "fast_over": {self.red: 42, self.yellow: 42, self.empty: 42}, "steps": {}}
+                    for i in range(self.think_games):
+                        g.copy_from(self)
+                        g.turn_place_disc(x)
+                        n = 0
+                        while not g.over:
+                            g.turn_random_place_disc_return_x()
+                            n += 1
+                        if g.steps not in stats[x]["steps"]:
+                            stats[x]["steps"][g.steps] = True
+                            stats[x][g.win] += 1
+                            if n < stats[x]["fast_over"][g.win]:
+                                stats[x]["fast_over"][g.win] = n
+            else:
+                for x in xs:
+                    stats[x] = {self.red: 0, self.yellow: 0, self.empty: 0, "total": 0, "fast_over": {self.red: 42, self.yellow: 42, self.empty: 42}, "steps": {}}
+                    g.copy_from(self)
+                    g.turn_place_disc(x)
+                    g.recursive_turn_place_disc(stats[x], n = 0, target = self.think_games)
             max_win = stats[xs[0]][self.turn]
             fast_lose = stats[xs[0]]["fast_over"][self.red if self.turn == self.yellow else self.yellow]
             best_x = xs[0]
             for x in xs[1:]:
+                # print(stats[x]["fast_over"][self.red if self.turn == self.yellow else self.yellow])
                 # if stats[x][self.turn] > max_win:
                 #     max_win = stats[x][self.turn]
                 #     best_x = x
@@ -502,10 +511,15 @@ class Game(object):
         window.blit(play_mode, (x, y))
         y += (150 * play_mode.get_height()) // 100
 
-        difficulty_mode = self.item_font.render(("< difficulty: %s >" if self.menu_idx == 1 else "difficulty: %s") % self.menu_defficulty_mode[self.menu_difficulty_idx], True, (0, 0, 0))
+        difficulty_mode = self.item_font.render(("< difficulty: %s >" if self.menu_idx == 1 else "difficulty: %s") % self.menu_difficulty_mode[self.menu_difficulty_idx], True, (0, 0, 0))
         x = (window.get_width() - difficulty_mode.get_width()) // 2
         window.blit(difficulty_mode, (x, y))
-        y += (150 * difficulty_mode.get_height()) // 100 + 100
+        y += (150 * difficulty_mode.get_height()) // 100
+
+        think_mode = self.item_font.render(("< cpu: %s >" if self.menu_idx == 2 else "cpu: %s") % self.menu_think_mode[self.menu_think_mode_idx], True, (0, 0, 0))
+        x = (window.get_width() - think_mode.get_width()) // 2
+        window.blit(think_mode, (x, y))
+        y += (150 * think_mode.get_height()) // 100 + 100
 
         help_info = self.info_font.render("up or down to switch options", True, green)
         x = (window.get_width() - help_info.get_width()) // 2
@@ -541,9 +555,12 @@ class Game(object):
                     quit()
                 elif event.key == pygame.K_RETURN:
                     self.mode = self.menu_play_mode[self.menu_play_mode_idx]
-                    self.think_games = self.menu_defficulty_mode[self.menu_difficulty_idx]
-                    self.think_games_red = self.menu_defficulty_mode[self.menu_difficulty_idx]
-                    self.think_games_yellow = self.menu_defficulty_mode[self.menu_difficulty_idx]
+                    self.think_games = self.menu_difficulty_mode[self.menu_difficulty_idx]
+                    self.think_games_red = self.menu_difficulty_mode[self.menu_difficulty_idx]
+                    self.think_games_yellow = self.menu_difficulty_mode[self.menu_difficulty_idx]
+                    self.think_mode = self.menu_think_mode[self.menu_think_mode_idx]
+                    self.think_mode_red = self.menu_think_mode[self.menu_think_mode_idx]
+                    self.think_mode_yellow = self.menu_think_mode[self.menu_think_mode_idx]
                     self.restart()
                     self.stats = {self.red: 0, self.yellow: 0, self.empty: 0}
                     if self.mode == "play yellow":
@@ -563,6 +580,12 @@ class Game(object):
                             self.menu_difficulty_idx = 0
                         self.difficulty_idx_red = self.menu_difficulty_idx
                         self.difficulty_idx_yellow = self.menu_difficulty_idx
+                    elif self.menu_idx == 2:
+                        self.menu_think_mode_idx -= 1
+                        if self.menu_think_mode_idx <= 0:
+                            self.menu_think_mode_idx = 0
+                        self.think_mode_idx_red = self.menu_think_mode_idx
+                        self.think_mode_idx_yellow = self.menu_think_mode_idx
                 elif event.key == pygame.K_RIGHT:
                     if self.menu_idx == 0:
                         self.menu_play_mode_idx += 1
@@ -570,18 +593,24 @@ class Game(object):
                             self.menu_play_mode_idx = len(self.menu_play_mode) - 1
                     elif self.menu_idx == 1:
                         self.menu_difficulty_idx += 1
-                        if self.menu_difficulty_idx >= len(self.menu_defficulty_mode) - 1:
-                            self.menu_difficulty_idx = len(self.menu_defficulty_mode) - 1
+                        if self.menu_difficulty_idx >= len(self.menu_difficulty_mode) - 1:
+                            self.menu_difficulty_idx = len(self.menu_difficulty_mode) - 1
                         self.difficulty_idx_red = self.menu_difficulty_idx
                         self.difficulty_idx_yellow = self.menu_difficulty_idx
+                    elif self.menu_idx == 2:
+                        self.menu_think_mode_idx += 1
+                        if self.menu_think_mode_idx >= len(self.menu_think_mode) - 1:
+                            self.menu_think_mode_idx = len(self.menu_think_mode) - 1
+                        self.think_mode_idx_red = self.menu_think_mode_idx
+                        self.think_mode_idx_yellow = self.menu_think_mode_idx
                 elif event.key == pygame.K_UP:
                     self.menu_idx -= 1
                     if self.menu_idx < 0:
                         self.menu_idx = 0
                 elif event.key == pygame.K_DOWN:
                     self.menu_idx += 1
-                    if self.menu_idx >= 1:
-                        self.menu_idx = 1
+                    if self.menu_idx >= 2:
+                        self.menu_idx = 2
                 elif event.key == pygame.K_f:
                     pygame.display.toggle_fullscreen()
 
@@ -723,14 +752,14 @@ class Game(object):
                     pygame.display.toggle_fullscreen()
                 elif event.key == pygame.K_UP:
                     self.difficulty_idx_red += 1
-                    if self.difficulty_idx_red >= len(self.menu_defficulty_mode):
+                    if self.difficulty_idx_red >= len(self.menu_difficulty_mode):
                         self.difficulty_idx_red = 0
-                    self.think_games_red = self.menu_defficulty_mode[self.difficulty_idx_red]
+                    self.think_games_red = self.menu_difficulty_mode[self.difficulty_idx_red]
                 elif event.key == pygame.K_DOWN:
                     self.difficulty_idx_yellow += 1
-                    if self.difficulty_idx_yellow >= len(self.menu_defficulty_mode):
+                    if self.difficulty_idx_yellow >= len(self.menu_difficulty_mode):
                         self.difficulty_idx_yellow = 0
-                    self.think_games_yellow = self.menu_defficulty_mode[self.difficulty_idx_yellow]
+                    self.think_games_yellow = self.menu_difficulty_mode[self.difficulty_idx_yellow]
                 elif event.key == pygame.K_SPACE:
                     self.auto_mode = not self.auto_mode
 
