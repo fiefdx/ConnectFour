@@ -158,7 +158,10 @@ if __name__ == "__main__":
                           backup_count = 5,
                           console = True)
     LOG.info("start game")
-    for i in range(4):
+    process_num = 4
+    if len(sys.argv) > 1:
+        process_num = int(sys.argv[1])
+    for i in range(process_num):
         w = Worker(i, PTaskQueue, PResultQueue)
         w.daemon = True
         w.start()
