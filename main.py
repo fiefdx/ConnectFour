@@ -630,7 +630,12 @@ class Game(object):
                     self.thinking = True
                     self.task_queue.put(self.turn, block = True)
                 if self.over:
-                    LOG.info("steps(%02d): %s", self.discs_counter, self.steps)
+                    win = "tie"
+                    if self.win == self.red:
+                        win = "red"
+                    elif self.win == self.yellow:
+                        win = "yellow"
+                    LOG.info("steps(%02d, %s): %s", self.discs_counter, win, self.steps)
 
         for y in range(6):
             for x in range(7):
