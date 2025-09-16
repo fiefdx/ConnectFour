@@ -635,7 +635,7 @@ class Game(object):
                         win = "red"
                     elif self.win == self.yellow:
                         win = "yellow"
-                    LOG.info("steps(%02d, %s): %s", self.discs_counter, win, self.steps)
+                    LOG.info("steps(%02d, %s, %s-%s-%s): %s", self.discs_counter, win, self.stats[self.red], self.stats[self.empty], self.stats[self.yellow], self.steps)
 
         for y in range(6):
             for x in range(7):
