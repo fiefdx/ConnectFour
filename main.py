@@ -46,8 +46,10 @@ class ThinkThread(StoppableThread):
                         if self.game is not None and turn:
                             if turn == 1:
                                 self.game.think_games = self.game.think_games_red
+                                self.game.think_mode = self.game.think_mode_red
                             elif turn == 2:
                                 self.game.think_games = self.game.think_games_yellow
+                                self.game.think_mode = self.game.think_mode_yellow
                             x = self.game.choose_best_move()
                             # self.game.dropping = True
                             y = self.game.drop_disc(x)
@@ -362,21 +364,7 @@ class Game(object):
             if x == -1:
                 xs = self.available_place_xs()
                 x = random.choice(xs)
-        # self.steps += str(x)
-        # print(self.steps)
         return self.turn_place_disc(x)
-
-    def turn_random_place_disc_return_x(self):
-        x = self.check_win_move()
-        if x == -1:
-            x = self.check_defensive_move()
-            if x == -1:
-                xs = self.available_place_xs()
-                x = random.choice(xs)
-        # self.steps += str(x)
-        # print(self.steps)
-        self.turn_place_disc(x)
-        return x
 
     def recursive_turn_place_disc(self, stats_x, n = 0, target = 1000):
         result = 0
@@ -431,7 +419,7 @@ class Game(object):
                         g.turn_place_disc(x)
                         n = 0
                         while not g.over:
-                            g.turn_random_place_disc_return_x()
+                            g.turn_random_place_disc()
                             n += 1
                         if g.steps not in stats[x]["steps"]:
                             stats[x]["steps"][g.steps] = True
@@ -677,21 +665,25 @@ class Game(object):
 
         if self.thinking:
             if self.turn == self.red:
-                thinking = self.stats_font.render("thinking", True, red)
+                thinking = self.stats_font.render("thinking-%s" % self.think_mode, True, red)
                 window.blit(thinking, (offset_x + 7 * 128 + 20, offset_y + 2 * 128 + 10))
             else:
-                thinking = self.stats_font.render("thinking", True, yellow)
+                thinking = self.stats_font.render("thinking-%s" % self.think_mode, True, yellow)
                 window.blit(thinking, (offset_x + 7 * 128 + 20, offset_y + 2 * 128 + 10))
 
         think_title = self.stats_font.render("CPU think:", True, (0, 0, 0))
         window.blit(think_title, (offset_x + 7 * 128 + 5, offset_y + 3 * 128))
         think_time = self.stats_font.render(" use: %.2fms" % (self.think_use_time * 1000.0), True, (0, 0, 0))
         window.blit(think_time, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 48))
-        think_red = self.stats_font.render(" red: %d" % (self.think[self.red], ), True, (0, 0, 0))
+        total = self.think[self.red] + self.think[self.yellow] + self.think[self.empty]
+        v = (100 * self.think[self.red] / total) if total > 0 else 0
+        think_red = self.stats_font.render(" red: %.2f%%" % v, True, (0, 0, 0))
         window.blit(think_red, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 96))
-        think_yellow = self.stats_font.render(" yellow: %d" % (self.think[self.yellow], ), True, (0, 0, 0))
+        v = (100 * self.think[self.yellow] / total) if total > 0 else 0
+        think_yellow = self.stats_font.render(" yellow: %.2f%%" % v, True, (0, 0, 0))
         window.blit(think_yellow, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 144))
-        think_tie = self.stats_font.render(" tie: %d" % (self.think[self.empty], ), True, (0, 0, 0))
+        v = (100 * self.think[self.empty] / total) if total > 0 else 0
+        think_tie = self.stats_font.render(" tie: %.2f%%" % v, True, (0, 0, 0))
         window.blit(think_tie, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 192))
 
         if self.mode == "watching":
