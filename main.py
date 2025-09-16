@@ -653,6 +653,9 @@ class Game(object):
             red_think_level = self.stats_font.render(str(self.think_games_red), True, green)
             x = (128 - red_think_level.get_width()) // 2
             window.blit(red_think_level, (offset_x + 7 * 128 + x, offset_y + 0 * 128 + 48))
+            red_think_mode = self.info_font.render(str(self.think_mode_red), True, (0, 0, 0))
+            x = (128 - red_think_mode.get_width()) // 2
+            window.blit(red_think_mode, (offset_x + 7 * 128 + x, offset_y + 0 * 128 + 88))
         
         window.blit(self.yellow_disc_small, (offset_x + 7 * 128, offset_y + 1 * 128))
         tie_stats = self.stats_font.render(": %s %s" % (self.stats[self.empty], "TIE" if self.over and self.win == self.empty else ""), True, (0, 0, 0))
@@ -668,6 +671,9 @@ class Game(object):
             yellow_think_level = self.stats_font.render(str(self.think_games_yellow), True, green)
             x = (128 - yellow_think_level.get_width()) // 2
             window.blit(yellow_think_level, (offset_x + 7 * 128 + x, offset_y + 1 * 128 + 48))
+            yellow_think_mode = self.info_font.render(str(self.think_mode_yellow), True, (0, 0, 0))
+            x = (128 - yellow_think_mode.get_width()) // 2
+            window.blit(yellow_think_mode, (offset_x + 7 * 128 + x, offset_y + 1 * 128 + 88))
 
         if self.thinking:
             if self.turn == self.red:
@@ -760,6 +766,16 @@ class Game(object):
                     if self.difficulty_idx_yellow >= len(self.menu_difficulty_mode):
                         self.difficulty_idx_yellow = 0
                     self.think_games_yellow = self.menu_difficulty_mode[self.difficulty_idx_yellow]
+                elif event.key == pygame.K_t:
+                    self.think_mode_idx_red += 1
+                    if self.think_mode_idx_red >= len(self.menu_think_mode):
+                        self.think_mode_idx_red = 0
+                    self.think_mode_red = self.menu_think_mode[self.think_mode_idx_red]
+                elif event.key == pygame.K_g:
+                    self.think_mode_idx_yellow += 1
+                    if self.think_mode_idx_yellow >= len(self.menu_think_mode):
+                        self.think_mode_idx_yellow = 0
+                    self.think_mode_yellow = self.menu_think_mode[self.think_mode_idx_yellow]
                 elif event.key == pygame.K_SPACE:
                     self.auto_mode = not self.auto_mode
 
