@@ -4,3 +4,5 @@ dist
 main.spec
 ConnectFour.sh
 ConnectFour*
+__pycache__
+logs
