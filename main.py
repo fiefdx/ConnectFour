@@ -402,8 +402,8 @@ class Game(object):
 
     def choose_best_move(self):
         t = time.time()
-        # if self.discs_counter < 2:
-        #     return 3
+        if self.discs_counter < 2:
+            return 3
         best_x = self.check_win_move()
         if best_x == -1:
             best_x = self.check_defensive_move()
