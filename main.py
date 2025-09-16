@@ -672,24 +672,26 @@ class Game(object):
                 window.blit(thinking, (offset_x + 7 * 128 + 20, offset_y + 2 * 128 + 10))
 
         think_title = self.stats_font.render("CPU think:", True, (0, 0, 0))
-        window.blit(think_title, (offset_x + 7 * 128 + 5, offset_y + 3 * 128))
+        window.blit(think_title, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 - 10))
         think_time = self.stats_font.render(" use: %.2fms" % (self.think_use_time * 1000.0), True, (0, 0, 0))
-        window.blit(think_time, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 48))
+        window.blit(think_time, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 38))
         total = self.think[self.red] + self.think[self.yellow] + self.think[self.empty]
         v = (100 * self.think[self.red] / total) if total > 0 else 0
         think_red = self.stats_font.render(" red: %.2f%%" % v, True, (0, 0, 0))
-        window.blit(think_red, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 96))
+        window.blit(think_red, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 86))
         v = (100 * self.think[self.yellow] / total) if total > 0 else 0
         think_yellow = self.stats_font.render(" yellow: %.2f%%" % v, True, (0, 0, 0))
-        window.blit(think_yellow, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 144))
+        window.blit(think_yellow, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 134))
         v = (100 * self.think[self.empty] / total) if total > 0 else 0
         think_tie = self.stats_font.render(" tie: %.2f%%" % v, True, (0, 0, 0))
-        window.blit(think_tie, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 192))
+        window.blit(think_tie, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 182))
 
         if self.mode == "watching":
             help_info = self.info_font.render("space to toggle auto or manual mode", True, green)
-            window.blit(help_info, (offset_x + 7 * 128 + 2, offset_y + 3 * 128 + 240))
+            window.blit(help_info, (offset_x + 7 * 128 + 2, offset_y + 3 * 128 + 220))
             help_info = self.info_font.render("up or down to change CPUs levels", True, green)
+            window.blit(help_info, (offset_x + 7 * 128 + 2, offset_y + 3 * 128 + 240))
+            help_info = self.info_font.render("t or g to change CPUs mode", True, green)
             window.blit(help_info, (offset_x + 7 * 128 + 2, offset_y + 3 * 128 + 260))
         help_info = self.info_font.render("left or right to switch column", True, green)
         window.blit(help_info, (offset_x + 7 * 128 + 2, offset_y + 3 * 128 + 280))
