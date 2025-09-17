@@ -65,7 +65,7 @@ class Game(object):
         self.think = {self.red: 0, self.yellow: 0, self.empty: 0}
         self.stats = {self.red: 0, self.yellow: 0, self.empty: 0}
         self.menu_play_mode = ["play red", "play yellow", "two players", "watching"]
-        self.menu_difficulty_mode = [10, 20, 30, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 50000]
+        self.menu_difficulty_mode = [10, 20, 30, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 25000, 50000]
         self.menu_think_mode = ["mode1", "mode2"]
         self.menu_idx = 0
         self.menu_play_mode_idx = 0

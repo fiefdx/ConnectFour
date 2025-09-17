@@ -69,7 +69,7 @@ class Worker(Process):
                     else:
                         stats_x = {g.red: 0, g.yellow: 0, g.empty: 0, "total": 0, "fast_over": {g.red: 42, g.yellow: 42, g.empty: 42}, "steps": {}}
                         g.recursive_turn_place_disc(stats_x, n = 0, target = think_games)
-                    # LOG.info(stats_x)
+                    LOG.info("red: %s, yellow: %s, tie: %s, steps: %s", stats_x[g.red], stats_x[g.yellow], stats_x[g.empty], len(stats_x["steps"]))
                     self.result_queue.put((x, stats_x))
                 except queue.Empty:
                     time.sleep(0.1)
