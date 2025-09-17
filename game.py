@@ -409,14 +409,65 @@ class Game(object):
                 self.recursive_turn_place_disc_minimax(stats_x, n = n + 1, target = target)
                 self.remove_disc(x)
 
+    # def recursive_turn_place_disc_minimax_alpha_beta(self, stats_x, n = 0, target = 2, alpha = -math.inf, beta = math.inf, maximizing = 0): # target is depth level
+    #     stop = False
+    #     if self.over or n >= target:
+    #         red, yellow, _ = self.score_minimax()
+    #         if red - yellow < stats_x[self.red]:
+    #             stats_x[self.red] = red - yellow
+    #         if yellow - red < stats_x[self.yellow]:
+    #             stats_x[self.yellow] = yellow - red
+    #         if self.over:
+    #             if self.win == self.red:
+    #                 stats_x[self.red] += 10000
+    #                 stats_x[self.yellow] -= 10000
+    #             elif self.win == self.yellow:
+    #                 stats_x[self.red] -= 10000
+    #                 stats_x[self.yellow] += 10000
+    #         stats_x["total"] += 1
+    #         self.win = self.empty
+    #         self.over = False
+    #         if self.turn == maximizing:
+    #             best = -math.inf
+    #             best = max(best, stats_x[self.turn])
+    #             stats_x["alpha"] = max(stats_x["alpha"], best)
+    #             if stats_x["beta"] <= stats_x["alpha"]:
+    #                 stop = True
+    #         else:
+    #             best = math.inf
+    #             best = min(best, stats_x[self.turn])
+    #             stats_x["beta"] = min(stats_x["beta"], best)
+    #             if stats_x["beta"] <= stats_x["alpha"]:
+    #                 stop = True
+    #     else:
+    #         x = self.check_win_move()
+    #         if x == -1:
+    #             x = self.check_defensive_move()
+    #             if x == -1:
+    #                 xs = self.available_place_xs()
+    #                 for x in xs:
+    #                     self.turn_place_disc(x)
+    #                     cut = self.recursive_turn_place_disc_minimax_alpha_beta(stats_x, n = n + 1, target = target, alpha = alpha, beta = beta, maximizing = maximizing)
+    #                     self.remove_disc(x)
+    #                     if cut:
+    #                         break
+    #             else:
+    #                 self.turn_place_disc(x)
+    #                 stop = self.recursive_turn_place_disc_minimax_alpha_beta(stats_x, n = n + 1, target = target, alpha = alpha, beta = beta, maximizing = maximizing)
+    #                 self.remove_disc(x)
+    #         else:
+    #             self.turn_place_disc(x)
+    #             stop = self.recursive_turn_place_disc_minimax_alpha_beta(stats_x, n = n + 1, target = target, alpha = alpha, beta = beta, maximizing = maximizing)
+    #             self.remove_disc(x)
+    #     return stop
+
     def recursive_turn_place_disc_minimax_alpha_beta(self, stats_x, n = 0, target = 2, alpha = -math.inf, beta = math.inf, maximizing = 0): # target is depth level
-        stop = False
         if self.over or n >= target:
             red, yellow, _ = self.score_minimax()
-            if red - yellow < stats_x[self.red]:
-                stats_x[self.red] = red - yellow
-            if yellow - red < stats_x[self.yellow]:
-                stats_x[self.yellow] = yellow - red
+            # if red - yellow < stats_x[self.red]:
+            stats_x[self.red] = red - yellow
+            # if yellow - red < stats_x[self.yellow]:
+            stats_x[self.yellow] = yellow - red
             if self.over:
                 if self.win == self.red:
                     stats_x[self.red] += 10000
@@ -427,39 +478,63 @@ class Game(object):
             stats_x["total"] += 1
             self.win = self.empty
             self.over = False
+            return stats_x[self.red] if maximizing == self.red else stats_x[self.yellow]
+        else:
             if self.turn == maximizing:
                 best = -math.inf
-                best = max(best, stats_x[self.turn])
-                stats_x["alpha"] = max(stats_x["alpha"], best)
-                if stats_x["beta"] <= stats_x["alpha"]:
-                    stop = True
-            else:
-                best = math.inf
-                best = min(best, stats_x[self.turn])
-                stats_x["beta"] = min(stats_x["beta"], best)
-                if stats_x["beta"] <= stats_x["alpha"]:
-                    stop = True
-        else:
-            x = self.check_win_move()
-            if x == -1:
-                x = self.check_defensive_move()
+                x = self.check_win_move()
                 if x == -1:
-                    xs = self.available_place_xs()
-                    for x in xs:
+                    x = self.check_defensive_move()
+                    if x == -1:
+                        xs = self.available_place_xs()
+                        for x in xs:
+                            self.turn_place_disc(x)
+                            val = self.recursive_turn_place_disc_minimax_alpha_beta(stats_x, n = n + 1, target = target, alpha = alpha, beta = beta, maximizing = maximizing)
+                            self.remove_disc(x)
+                            best = max(best, val)
+                            alpha = max(alpha, best)
+                            if beta <= alpha:
+                                break
+                    else:
                         self.turn_place_disc(x)
-                        cut = self.recursive_turn_place_disc_minimax_alpha_beta(stats_x, n = n + 1, target = target, alpha = alpha, beta = beta, maximizing = maximizing)
+                        val = self.recursive_turn_place_disc_minimax_alpha_beta(stats_x, n = n + 1, target = target, alpha = alpha, beta = beta, maximizing = maximizing)
                         self.remove_disc(x)
-                        if cut:
-                            break
+                        best = max(best, val)
+                        alpha = max(alpha, best)
                 else:
                     self.turn_place_disc(x)
-                    stop = self.recursive_turn_place_disc_minimax_alpha_beta(stats_x, n = n + 1, target = target, alpha = alpha, beta = beta, maximizing = maximizing)
+                    val = self.recursive_turn_place_disc_minimax_alpha_beta(stats_x, n = n + 1, target = target, alpha = alpha, beta = beta, maximizing = maximizing)
                     self.remove_disc(x)
+                    best = max(best, val)
+                    alpha = max(alpha, best)
             else:
-                self.turn_place_disc(x)
-                stop = self.recursive_turn_place_disc_minimax_alpha_beta(stats_x, n = n + 1, target = target, alpha = alpha, beta = beta, maximizing = maximizing)
-                self.remove_disc(x)
-        return stop
+                best = math.inf
+                x = self.check_win_move()
+                if x == -1:
+                    x = self.check_defensive_move()
+                    if x == -1:
+                        xs = self.available_place_xs()
+                        for x in xs:
+                            self.turn_place_disc(x)
+                            val = self.recursive_turn_place_disc_minimax_alpha_beta(stats_x, n = n + 1, target = target, alpha = alpha, beta = beta, maximizing = maximizing)
+                            self.remove_disc(x)
+                            best = min(best, val)
+                            beta = min(beta, best)
+                            if beta <= alpha:
+                                break
+                    else:
+                        self.turn_place_disc(x)
+                        val = self.recursive_turn_place_disc_minimax_alpha_beta(stats_x, n = n + 1, target = target, alpha = alpha, beta = beta, maximizing = maximizing)
+                        self.remove_disc(x)
+                        best = min(best, val)
+                        beta = min(beta, best)
+                else:
+                    self.turn_place_disc(x)
+                    val = self.recursive_turn_place_disc_minimax_alpha_beta(stats_x, n = n + 1, target = target, alpha = alpha, beta = beta, maximizing = maximizing)
+                    self.remove_disc(x)
+                    best = min(best, val)
+                    beta = min(beta, best)
+            return best
 
     def choose_best_move(self):
         t = time.time()
