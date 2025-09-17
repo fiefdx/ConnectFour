@@ -43,6 +43,12 @@ class Game(object):
                       [self.empty, self.empty, self.empty, self.empty, self.empty, self.empty, self.empty],
                       [self.empty, self.empty, self.empty, self.empty, self.empty, self.empty, self.empty],
                       [self.empty, self.empty, self.empty, self.empty, self.empty, self.empty, self.empty]]
+        self.scores = [[3, 4, 5, 7, 5, 4, 3],
+                       [4, 6, 8, 10, 8, 6, 4],
+                       [5, 7, 11, 13, 11, 7, 5],
+                       [5, 7, 11, 13, 11, 7, 5],
+                       [4, 6, 8, 10, 8, 6, 4],
+                       [3, 4, 5, 7, 5, 4, 3]]
         self.turn = self.red
         self.discs_counter = 0
         self.over = False
@@ -66,7 +72,7 @@ class Game(object):
         self.stats = {self.red: 0, self.yellow: 0, self.empty: 0}
         self.menu_play_mode = ["play red", "play yellow", "two players", "watching"]
         self.menu_difficulty_mode = [10, 20, 30, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 25000, 50000]
-        self.menu_think_mode = ["mode1", "mode2"]
+        self.menu_think_mode = ["random", "recursive", "minimax"]
         self.menu_idx = 0
         self.menu_play_mode_idx = 0
         self.menu_difficulty_idx = 0
@@ -345,6 +351,65 @@ class Game(object):
                 self.remove_disc(x)
         return result
 
+    def score_minimax(self):
+        red = 0
+        yellow = 0
+        tie = 0
+        for x in range(7):
+            for y in range(6):
+                if self.board[y][x] == self.red:
+                    red += self.scores[y][x]
+                elif self.board[y][x] == self.yellow:
+                    yellow += self.scores[y][x]
+        r23 = self.check_offensive_move23(self.red)
+        y23 = self.check_offensive_move23(self.yellow)
+        rl23 = self.check_offensive_lock_move23(self.red)
+        yl23 = self.check_offensive_lock_move23(self.yellow)
+        # r33 = self.check_offensive_win_move23(self.red)
+        # y33 = self.check_offensive_win_move23(self.yellow)
+        r34 = self.check_offensive_move34(self.red)
+        y34 = self.check_offensive_move34(self.yellow)
+        red += sum(r23) * 10 + sum(r34) * 100 + sum(rl23) * 100 # + sum(r33) * 100
+        yellow += sum(y23) * 10 + sum(y34) * 100 + sum(yl23) * 100 # + sum(y33) * 100
+        return red, yellow, tie
+
+    def recursive_turn_place_disc_minimax(self, stats_x, n = 0, target = 2): # target is depth level
+        if self.over or n >= target:
+            red, yellow, _ = self.score_minimax()
+            if red - yellow < stats_x[self.red]:
+                stats_x[self.red] = red - yellow
+            if yellow - red < stats_x[self.yellow]:
+                stats_x[self.yellow] = yellow - red
+            if self.over:
+                if self.win == self.red:
+                    stats_x[self.red] += 10000
+                    stats_x[self.yellow] -= 10000
+                elif self.win == self.yellow:
+                    stats_x[self.red] -= 10000
+                    stats_x[self.yellow] += 10000
+            stats_x["total"] += 1
+            self.win = self.empty
+            self.over = False
+        else:
+            x = self.check_win_move()
+            if x == -1:
+                x = self.check_defensive_move()
+                if x == -1:
+                    xs = self.available_place_xs()
+                    random.shuffle(xs)
+                    for x in xs:
+                        self.turn_place_disc(x)
+                        self.recursive_turn_place_disc_minimax(stats_x, n = n + 1, target = target)
+                        self.remove_disc(x)
+                else:
+                    self.turn_place_disc(x)
+                    self.recursive_turn_place_disc_minimax(stats_x, n = n + 1, target = target)
+                    self.remove_disc(x)
+            else:
+                self.turn_place_disc(x)
+                self.recursive_turn_place_disc_minimax(stats_x, n = n + 1, target = target)
+                self.remove_disc(x)
+
     def choose_best_move(self):
         t = time.time()
         if self.discs_counter < 2:
@@ -356,7 +421,7 @@ class Game(object):
             xs = self.available_place_xs()
             stats = {}
             g = Game()
-            if self.think_mode == "mode1":
+            if self.think_mode == "random":
                 for x in xs:
                     stats[x] = {self.red: 0, self.yellow: 0, self.empty: 0, "total": 0, "fast_over": {self.red: 42, self.yellow: 42, self.empty: 42}, "steps": {}}
                     for i in range(self.think_games):
@@ -371,7 +436,7 @@ class Game(object):
                             stats[x][g.win] += 1
                             if n < stats[x]["fast_over"][g.win]:
                                 stats[x]["fast_over"][g.win] = n
-            else:
+            elif self.think_mode == "recursive":
                 for x in xs:
                     stats[x] = {self.red: 0, self.yellow: 0, self.empty: 0, "total": 0, "fast_over": {self.red: 42, self.yellow: 42, self.empty: 42}, "steps": {}}
                     g.copy_from(self)
@@ -634,10 +699,10 @@ class Game(object):
 
         if self.thinking:
             if self.turn == self.red:
-                thinking = self.stats_font.render("thinking-%s" % self.think_mode, True, red)
+                thinking = self.stats_font.render("thinking", True, red)
                 window.blit(thinking, (offset_x + 7 * 128 + 20, offset_y + 2 * 128 + 10))
             else:
-                thinking = self.stats_font.render("thinking-%s" % self.think_mode, True, yellow)
+                thinking = self.stats_font.render("thinking", True, yellow)
                 window.blit(thinking, (offset_x + 7 * 128 + 20, offset_y + 2 * 128 + 10))
 
         think_title = self.stats_font.render("CPU think:", True, (0, 0, 0))
@@ -759,6 +824,12 @@ class GamePicklable(Game):
                       [self.empty, self.empty, self.empty, self.empty, self.empty, self.empty, self.empty],
                       [self.empty, self.empty, self.empty, self.empty, self.empty, self.empty, self.empty],
                       [self.empty, self.empty, self.empty, self.empty, self.empty, self.empty, self.empty]]
+        self.scores = [[3, 4, 5, 7, 5, 4, 3],
+                       [4, 6, 8, 10, 8, 6, 4],
+                       [5, 7, 11, 13, 11, 7, 5],
+                       [5, 7, 11, 13, 11, 7, 5],
+                       [4, 6, 8, 10, 8, 6, 4],
+                       [3, 4, 5, 7, 5, 4, 3]]
         self.turn = self.red
         self.discs_counter = 0
         self.over = False

@@ -52,7 +52,7 @@ class Worker(Process):
                     task = self.task_queue.get(block = False)
                     think_mode, g, x, think_games = task
                     LOG.info("think_mode: %s, x: %s, games: %s", think_mode, x, think_games)
-                    if think_mode == "mode1":
+                    if think_mode == "random":
                         gg = GamePicklable()
                         stats_x = {g.red: 0, g.yellow: 0, g.empty: 0, "total": 0, "fast_over": {g.red: 42, g.yellow: 42, g.empty: 42}, "steps": {}}
                         for i in range(think_games):
@@ -66,9 +66,13 @@ class Worker(Process):
                                 stats_x[gg.win] += 1
                                 if n < stats_x["fast_over"][gg.win]:
                                     stats_x["fast_over"][gg.win] = n
-                    else:
+                    elif think_mode == "recursive":
                         stats_x = {g.red: 0, g.yellow: 0, g.empty: 0, "total": 0, "fast_over": {g.red: 42, g.yellow: 42, g.empty: 42}, "steps": {}}
                         g.recursive_turn_place_disc(stats_x, n = 0, target = think_games)
+                    else: # minimax
+                        stats_x = {g.red: 0, g.yellow: 0, g.empty: 0, "total": 0, "fast_over": {g.red: 42, g.yellow: 42, g.empty: 42}, "steps": {}}
+                        g.recursive_turn_place_disc_minimax(stats_x, n = 0, target = 6)
+                        LOG.info("%d: %s", x, stats_x)
                     LOG.info("red: %s, yellow: %s, tie: %s, steps: %s", stats_x[g.red], stats_x[g.yellow], stats_x[g.empty], len(stats_x["steps"]))
                     self.result_queue.put((x, stats_x))
                 except queue.Empty:
