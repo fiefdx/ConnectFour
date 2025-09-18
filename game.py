@@ -151,6 +151,47 @@ class Game(object):
                 self.board[y][x] = self.empty
         return r
 
+    def is_same2(self, v1, v2, color):
+        return v1 == v2 == color
+
+    def check_move2(self, color):
+        r = [0, 0, 0, 0, 0, 0, 0]
+        for x in range(7):
+            for y in range(6):
+                if self.board[y][x] != self.empty:
+                    for xx in range(max(0, x - 1), min(x, 5)):
+                        if self.is_same2(self.board[y][xx], self.board[y][xx + 1], color):
+                            r[x] += 1
+                    if y <= 4 and self.is_same2(self.board[y][x], self.board[y + 1][x], color):
+                        r[x] += 1
+                    for d in range(2):
+                        if x - d >= 0 and x - d + 1 <= 6 and y - d >= 0 and y - d + 1 <= 5:
+                            if self.is_same2(self.board[y - d][x - d], self.board[y - d + 1][x - d + 1], color):
+                                r[x] += 1
+                        if x - d >= 0 and x - d + 1 <= 6 and y + d <= 5 and y + d - 1 >= 0:
+                            if self.is_same2(self.board[y + d][x - d], self.board[y + d - 1][x - d + 1], color):
+                                r[x] += 1
+        return r
+
+    def check_move3(self, color):
+        r = [0, 0, 0, 0, 0, 0, 0]
+        for x in range(7):
+            for y in range(6):
+                if self.board[y][x] != self.empty:
+                    for xx in range(max(0, x - 2), min(x + 1, 5)):
+                        if self.is_same3(self.board[y][xx], self.board[y][xx + 1], self.board[y][xx + 2], color):
+                            r[x] += 1
+                    if y <= 3 and self.is_same3(self.board[y][x], self.board[y + 1][x], self.board[y + 2][x], color):
+                        r[x] += 1
+                    for d in range(3):
+                        if x - d >= 0 and x - d + 2 <= 6 and y - d >= 0 and y - d + 2 <= 5:
+                            if self.is_same3(self.board[y - d][x - d], self.board[y - d + 1][x - d + 1], self.board[y - d + 2][x - d + 2], color):
+                                r[x] += 1
+                        if x - d >= 0 and x - d + 2 <= 6 and y + d <= 5 and y + d - 2 >= 0:
+                            if self.is_same3(self.board[y + d][x - d], self.board[y + d - 1][x - d + 1], self.board[y + d - 2][x - d + 2], color):
+                                r[x] += 1
+        return r
+
     def is_line5(self, v1, v2, v3, v4, v5, color):
         return v1 == v5 == self.empty and v2 == v3 == v4 == color
 
