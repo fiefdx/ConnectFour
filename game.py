@@ -72,7 +72,7 @@ class Game(object):
         self.stats = {self.red: 0, self.yellow: 0, self.empty: 0}
         self.menu_play_mode = ["play red", "play yellow", "two players", "watching"]
         self.menu_difficulty_mode = [10, 20, 30, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 25000, 50000]
-        self.menu_think_mode = ["random", "recursive", "minimax", "alphabeta"]
+        self.menu_think_mode = ["random", "recursive", "recursive2", "minimax", "alphabeta"]
         self.menu_idx = 0
         self.menu_play_mode_idx = 0
         self.menu_difficulty_idx = 0
@@ -391,6 +391,37 @@ class Game(object):
                 result += self.recursive_turn_place_disc(stats_x, n = n + 1, target = target)
                 self.remove_disc(x)
         return result
+
+    def recursive_turn_place_disc_total_target(self, stats_x, n = 0, target = 1000):
+        if self.over:
+            stats_x[self.win] += 1
+            stats_x["total"] += 1
+            stats_x["steps"][self.steps] = True
+            if n < stats_x["fast_over"][self.win]:
+                stats_x["fast_over"][self.win] = n
+            self.win = self.empty
+            self.over = False
+        else:
+            x = self.check_win_move()
+            if x == -1:
+                x = self.check_defensive_move()
+                if x == -1:
+                    xs = self.available_place_xs()
+                    random.shuffle(xs)
+                    for x in xs:
+                        if stats_x["total"] >= target:
+                            break
+                        self.turn_place_disc(x)
+                        self.recursive_turn_place_disc_total_target(stats_x, n = n + 1, target = target)
+                        self.remove_disc(x)
+                else:
+                    self.turn_place_disc(x)
+                    self.recursive_turn_place_disc_total_target(stats_x, n = n + 1, target = target)
+                    self.remove_disc(x)
+            else:
+                self.turn_place_disc(x)
+                self.recursive_turn_place_disc_total_target(stats_x, n = n + 1, target = target)
+                self.remove_disc(x)
 
     def score_minimax(self):
         red = 0

@@ -70,6 +70,9 @@ class Worker(Process):
                     elif think_mode == "recursive":
                         stats_x = {g.red: 0, g.yellow: 0, g.empty: 0, "total": 0, "fast_over": {g.red: 42, g.yellow: 42, g.empty: 42}, "steps": {}}
                         g.recursive_turn_place_disc(stats_x, n = 0, target = think_games)
+                    elif think_mode == "recursive2":
+                        stats_x = {g.red: 0, g.yellow: 0, g.empty: 0, "total": 0, "fast_over": {g.red: 42, g.yellow: 42, g.empty: 42}, "steps": {}}
+                        g.recursive_turn_place_disc_total_target(stats_x, n = 0, target = think_games)
                     elif think_mode == "minimax": # minimax
                         stats_x = {g.red: 0, g.yellow: 0, g.empty: 0, "total": 0, "fast_over": {g.red: 42, g.yellow: 42, g.empty: 42}, "steps": {}}
                         g.recursive_turn_place_disc_minimax(stats_x, n = 0, target = 6)
