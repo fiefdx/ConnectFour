@@ -895,7 +895,7 @@ class Game(object):
         window.blit(think_title, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 - 10))
         think_time = self.stats_font.render(" use: %.2fms" % (self.think_use_time * 1000.0), True, (0, 0, 0))
         window.blit(think_time, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 38))
-        if self.think_mode != "minimax" and self.think_mode != "minimaxAB":
+        if self.think[self.red] != "------":
             total = self.think[self.red] + self.think[self.yellow] + self.think[self.empty]
             v = (100 * self.think[self.red] / total) if total > 0 else 0
             think_red = self.stats_font.render(" red: %.2f%%" % v, True, (0, 0, 0))

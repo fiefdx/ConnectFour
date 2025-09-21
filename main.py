@@ -61,11 +61,14 @@ class ThinkThread(StoppableThread):
                                 self.game.think_mode = self.game.think_mode_yellow
                             # x = self.game.choose_best_move()
                             t = time.time()
+                            think_mode = None
                             best_x = self.game.choose_immediate_move()
                             if best_x == -1:
                                 n = 0
                                 xs = []
                                 for task in self.game.iter_best_move_tasks():
+                                    if think_mode is None:
+                                        think_mode = task[0]
                                     xs.append(task[2])
                                     self.worker_task_queue.put(task)
                                     n += 1
@@ -87,9 +90,14 @@ class ThinkThread(StoppableThread):
                                             max_win = stats[x][self.game.turn]
                                             fast_lose = stats[x]["fast_over"][self.game.red if self.game.turn == self.game.yellow else self.game.yellow]
                                             best_x = x
-                                self.game.think[self.game.red] = stats[best_x][self.game.red]
-                                self.game.think[self.game.yellow] = stats[best_x][self.game.yellow]
-                                self.game.think[self.game.empty] = stats[best_x][self.game.empty]
+                                if think_mode in ("minimax", "minimaxAB"):
+                                    self.game.think[self.game.red] = "------"
+                                    self.game.think[self.game.yellow] = "------"
+                                    self.game.think[self.game.empty] = "------"
+                                else:
+                                    self.game.think[self.game.red] = stats[best_x][self.game.red]
+                                    self.game.think[self.game.yellow] = stats[best_x][self.game.yellow]
+                                    self.game.think[self.game.empty] = stats[best_x][self.game.empty]
                             self.game.think_use_time = time.time() - t
 
                             # self.game.dropping = True
