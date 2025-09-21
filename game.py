@@ -72,7 +72,23 @@ class Game(object):
         self.stats = {self.red: 0, self.yellow: 0, self.empty: 0}
         self.menu_play_mode = ["play red", "play yellow", "two players", "watching"]
         self.menu_difficulty_mode = [10, 20, 30, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 25000, 50000]
-        self.menu_think_mode = ["random", "recursive", "recursive2", "minimax", "alphabeta"]
+        self.minimax_levels_map = {
+            10: 3,
+            20: 4,
+            30: 5,
+            50: 6,
+            100: 7,
+            200: 8,
+            500: 9,
+            1000: 3,
+            2000: 4,
+            5000: 5,
+            10000: 6,
+            20000: 7,
+            25000: 8,
+            50000: 9,
+        }
+        self.menu_think_mode = ["random", "recursive", "recursive2", "minimax", "minimaxAB"]
         self.menu_idx = 0
         self.menu_play_mode_idx = 0
         self.menu_difficulty_idx = 0
@@ -948,9 +964,14 @@ class Game(object):
         red_win_stats = self.stats_font.render(": %s %s" % (self.stats[self.red], "WIN" if self.over and self.win == self.red else ""), True, red)
         window.blit(red_win_stats, (offset_x + 7 * 128 + 128, offset_y + 0 * 128 + 48))
         if self.mode == "watching":
-            red_think_level = self.stats_font.render(str(self.think_games_red), True, green)
-            x = (128 - red_think_level.get_width()) // 2
-            window.blit(red_think_level, (offset_x + 7 * 128 + x, offset_y + 0 * 128 + 48))
+            if self.think_mode_red != "minimax" and self.think_mode_red != "minimaxAB":
+                red_think_level = self.stats_font.render(str(self.think_games_red), True, green)
+                x = (128 - red_think_level.get_width()) // 2
+                window.blit(red_think_level, (offset_x + 7 * 128 + x, offset_y + 0 * 128 + 48))
+            else:
+                red_think_level = self.stats_font.render(str(self.minimax_levels_map[self.think_games_red]), True, green)
+                x = (128 - red_think_level.get_width()) // 2
+                window.blit(red_think_level, (offset_x + 7 * 128 + x, offset_y + 0 * 128 + 48))
             red_think_mode = self.info_font.render(str(self.think_mode_red), True, (0, 0, 0))
             x = (128 - red_think_mode.get_width()) // 2
             window.blit(red_think_mode, (offset_x + 7 * 128 + x, offset_y + 0 * 128 + 88))
@@ -966,9 +987,14 @@ class Game(object):
         yellow_win_stats = self.stats_font.render(": %s %s" % (self.stats[self.yellow], "WIN" if self.over and self.win == self.yellow else ""), True, yellow)
         window.blit(yellow_win_stats, (offset_x + 7 * 128 + 128, offset_y + 1 * 128 + 48))
         if self.mode == "watching":
-            yellow_think_level = self.stats_font.render(str(self.think_games_yellow), True, green)
-            x = (128 - yellow_think_level.get_width()) // 2
-            window.blit(yellow_think_level, (offset_x + 7 * 128 + x, offset_y + 1 * 128 + 48))
+            if self.think_mode_yellow != "minimax" and self.think_mode_yellow != "minimaxAB":
+                yellow_think_level = self.stats_font.render(str(self.think_games_yellow), True, green)
+                x = (128 - yellow_think_level.get_width()) // 2
+                window.blit(yellow_think_level, (offset_x + 7 * 128 + x, offset_y + 1 * 128 + 48))
+            else:
+                yellow_think_level = self.stats_font.render(str(self.minimax_levels_map[self.think_games_yellow]), True, green)
+                x = (128 - yellow_think_level.get_width()) // 2
+                window.blit(yellow_think_level, (offset_x + 7 * 128 + x, offset_y + 1 * 128 + 48))
             yellow_think_mode = self.info_font.render(str(self.think_mode_yellow), True, (0, 0, 0))
             x = (128 - yellow_think_mode.get_width()) // 2
             window.blit(yellow_think_mode, (offset_x + 7 * 128 + x, offset_y + 1 * 128 + 88))
@@ -1128,8 +1154,24 @@ class GamePicklable(Game):
         self.think = {self.red: 0, self.yellow: 0, self.empty: 0}
         self.stats = {self.red: 0, self.yellow: 0, self.empty: 0}
         self.menu_play_mode = ["play red", "play yellow", "two players", "watching"]
-        self.menu_difficulty_mode = [10, 20, 30, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 50000]
-        self.menu_think_mode = ["mode1", "mode2"]
+        self.menu_difficulty_mode = [10, 20, 30, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 25000, 50000]
+        self.minimax_levels_map = {
+            10: 3,
+            20: 4,
+            30: 5,
+            50: 6,
+            100: 7,
+            200: 8,
+            500: 9,
+            1000: 3,
+            2000: 4,
+            5000: 5,
+            10000: 6,
+            20000: 7,
+            25000: 8,
+            50000: 9,
+        }
+        self.menu_think_mode = ["random", "recursive", "recursive2", "minimax", "minimaxAB"]
         self.menu_idx = 0
         self.menu_play_mode_idx = 0
         self.menu_difficulty_idx = 0

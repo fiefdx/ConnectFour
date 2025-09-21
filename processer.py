@@ -75,20 +75,20 @@ class Worker(Process):
                         g.recursive_turn_place_disc_total_target(stats_x, n = 0, target = think_games)
                     elif think_mode == "minimax": # minimax
                         stats_x = {g.red: 0, g.yellow: 0, g.empty: 0, "total": 0, "fast_over": {g.red: 42, g.yellow: 42, g.empty: 42}, "steps": {}}
-                        best = g.recursive_turn_place_disc_minimax(stats_x, n = 0, target = 6, maximizing = g.red if g.turn == g.yellow else g.yellow)
+                        best = g.recursive_turn_place_disc_minimax(stats_x, n = 0, target = g.minimax_levels_map[think_games], maximizing = g.red if g.turn == g.yellow else g.yellow)
                         if g.turn == g.red:
                             stats_x[g.yellow] = best
                         elif g.turn == g.yellow:
                             stats_x[g.red] = best
-                        LOG.info("%d: %s", x, stats_x)
+                        LOG.info("%d[%s]: %s", x, g.minimax_levels_map[think_games], stats_x)
                     else: # minimax alpha beta
                         stats_x = {g.red: 0, g.yellow: 0, g.empty: 0, "total": 0, "alpha": -math.inf, "beta": math.inf, "fast_over": {g.red: 42, g.yellow: 42, g.empty: 42}, "steps": {}}
-                        best = g.recursive_turn_place_disc_minimax_alpha_beta(stats_x, n = 0, target = 8, alpha = -math.inf, beta = math.inf, maximizing = g.red if g.turn == g.yellow else g.yellow)
+                        best = g.recursive_turn_place_disc_minimax_alpha_beta(stats_x, n = 0, target = g.minimax_levels_map[think_games], alpha = -math.inf, beta = math.inf, maximizing = g.red if g.turn == g.yellow else g.yellow)
                         if g.turn == g.red:
                             stats_x[g.yellow] = best
                         elif g.turn == g.yellow:
                             stats_x[g.red] = best
-                        LOG.info("%d: %s", x, stats_x)
+                        LOG.info("%d[%s]: %s", x, g.minimax_levels_map[think_games], stats_x)
                     LOG.info("red: %s, yellow: %s, tie: %s, steps: %s", stats_x[g.red], stats_x[g.yellow], stats_x[g.empty], len(stats_x["steps"]))
                     self.result_queue.put((x, stats_x))
                 except queue.Empty:
