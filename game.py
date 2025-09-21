@@ -1011,16 +1011,24 @@ class Game(object):
         window.blit(think_title, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 - 10))
         think_time = self.stats_font.render(" use: %.2fms" % (self.think_use_time * 1000.0), True, (0, 0, 0))
         window.blit(think_time, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 38))
-        total = self.think[self.red] + self.think[self.yellow] + self.think[self.empty]
-        v = (100 * self.think[self.red] / total) if total > 0 else 0
-        think_red = self.stats_font.render(" red: %.2f%%" % v, True, (0, 0, 0))
-        window.blit(think_red, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 86))
-        v = (100 * self.think[self.yellow] / total) if total > 0 else 0
-        think_yellow = self.stats_font.render(" yellow: %.2f%%" % v, True, (0, 0, 0))
-        window.blit(think_yellow, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 134))
-        v = (100 * self.think[self.empty] / total) if total > 0 else 0
-        think_tie = self.stats_font.render(" tie: %.2f%%" % v, True, (0, 0, 0))
-        window.blit(think_tie, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 182))
+        if self.think_mode != "minimax" and self.think_mode != "minimaxAB":
+            total = self.think[self.red] + self.think[self.yellow] + self.think[self.empty]
+            v = (100 * self.think[self.red] / total) if total > 0 else 0
+            think_red = self.stats_font.render(" red: %.2f%%" % v, True, (0, 0, 0))
+            window.blit(think_red, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 86))
+            v = (100 * self.think[self.yellow] / total) if total > 0 else 0
+            think_yellow = self.stats_font.render(" yellow: %.2f%%" % v, True, (0, 0, 0))
+            window.blit(think_yellow, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 134))
+            v = (100 * self.think[self.empty] / total) if total > 0 else 0
+            think_tie = self.stats_font.render(" tie: %.2f%%" % v, True, (0, 0, 0))
+            window.blit(think_tie, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 182))
+        else:
+            think_red = self.stats_font.render(" red: ------", True, (0, 0, 0))
+            window.blit(think_red, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 86))
+            think_yellow = self.stats_font.render(" yellow: ------", True, (0, 0, 0))
+            window.blit(think_yellow, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 134))
+            think_tie = self.stats_font.render(" tie: ------", True, (0, 0, 0))
+            window.blit(think_tie, (offset_x + 7 * 128 + 5, offset_y + 3 * 128 + 182))
 
         if self.mode == "watching":
             help_info = self.info_font.render("space to toggle auto or manual mode", True, green)
