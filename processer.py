@@ -75,7 +75,11 @@ class Worker(Process):
                         g.recursive_turn_place_disc_total_target(stats_x, n = 0, target = think_games)
                     elif think_mode == "minimax": # minimax
                         stats_x = {g.red: 0, g.yellow: 0, g.empty: 0, "total": 0, "fast_over": {g.red: 42, g.yellow: 42, g.empty: 42}, "steps": {}}
-                        g.recursive_turn_place_disc_minimax(stats_x, n = 0, target = 6)
+                        best = g.recursive_turn_place_disc_minimax(stats_x, n = 0, target = 6, maximizing = g.red if g.turn == g.yellow else g.yellow)
+                        if g.turn == g.red:
+                            stats_x[g.yellow] = best
+                        elif g.turn == g.yellow:
+                            stats_x[g.red] = best
                         LOG.info("%d: %s", x, stats_x)
                     else: # minimax alpha beta
                         stats_x = {g.red: 0, g.yellow: 0, g.empty: 0, "total": 0, "alpha": -math.inf, "beta": math.inf, "fast_over": {g.red: 42, g.yellow: 42, g.empty: 42}, "steps": {}}

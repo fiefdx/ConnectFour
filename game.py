@@ -123,6 +123,7 @@ class Game(object):
         if y != -1:
             self.board[y][x] = self.empty
             self.discs_counter -= 1
+            self.turn = self.red if self.discs_counter % 2 == 0 else self.yellow
             self.steps = self.steps[:-1]
             return y
         return -1
@@ -294,10 +295,6 @@ class Game(object):
     def turn_place_disc(self, x):
         y = self.place_disc(x, self.turn)
         if y != -1:
-            # if self.turn == self.red:
-            #     self.turn = self.yellow
-            # else:
-            #     self.turn = self.red
             self.turn = self.red if self.discs_counter % 2 == 0 else self.yellow
             win = self.check_status(x, y)
             if win != self.empty:
@@ -427,12 +424,12 @@ class Game(object):
         red = 0
         yellow = 0
         tie = 0
-        for x in range(7):
-            for y in range(6):
-                if self.board[y][x] == self.red:
-                    red += self.scores[y][x]
-                elif self.board[y][x] == self.yellow:
-                    yellow += self.scores[y][x]
+        # for x in range(7):
+        #     for y in range(6):
+        #         if self.board[y][x] == self.red:
+        #             red += self.scores[y][x]
+        #         elif self.board[y][x] == self.yellow:
+        #             yellow += self.scores[y][x]
         r23 = self.check_offensive_move23(self.red)
         y23 = self.check_offensive_move23(self.yellow)
         rl23 = self.check_offensive_lock_move23(self.red)
@@ -445,41 +442,57 @@ class Game(object):
         yellow += sum(y23) * 10 + sum(y34) * 100 + sum(yl23) * 100 # + sum(y33) * 100
         return red, yellow, tie
 
-    def recursive_turn_place_disc_minimax(self, stats_x, n = 0, target = 2): # target is depth level
-        if self.over or n >= target:
-            red, yellow, _ = self.score_minimax()
-            if red - yellow < stats_x[self.red]:
-                stats_x[self.red] = red - yellow
-            if yellow - red < stats_x[self.yellow]:
-                stats_x[self.yellow] = yellow - red
-            if self.over:
-                if self.win == self.red:
-                    stats_x[self.red] += 10000
-                    stats_x[self.yellow] -= 10000
-                elif self.win == self.yellow:
-                    stats_x[self.red] -= 10000
-                    stats_x[self.yellow] += 10000
-            stats_x["total"] += 1
-            self.win = self.empty
-            self.over = False
-        else:
-            x = self.check_win_move()
-            if x == -1:
-                x = self.check_defensive_move()
-                if x == -1:
-                    xs = self.available_place_xs()
-                    for x in xs:
-                        self.turn_place_disc(x)
-                        self.recursive_turn_place_disc_minimax(stats_x, n = n + 1, target = target)
-                        self.remove_disc(x)
-                else:
-                    self.turn_place_disc(x)
-                    self.recursive_turn_place_disc_minimax(stats_x, n = n + 1, target = target)
-                    self.remove_disc(x)
-            else:
-                self.turn_place_disc(x)
-                self.recursive_turn_place_disc_minimax(stats_x, n = n + 1, target = target)
-                self.remove_disc(x)
+    # def score_minimax(self, color):
+    #     result = 0
+    #     # red = 0
+    #     # yellow = 0
+    #     # tie = 0
+    #     for x in range(7):
+    #         for y in range(6):
+    #             if self.board[y][x] == color:
+    #                 result += self.scores[y][x]
+    #     r23 = self.check_offensive_move23(color)
+    #     rl23 = self.check_offensive_lock_move23(color)
+    #     # r33 = self.check_offensive_win_move23(self.red)
+    #     r34 = self.check_offensive_move34(color)
+    #     result += sum(r23) * 10 + sum(r34) * 100 + sum(rl23) * 100 # + sum(r33) * 100
+    #     return result, 0, 0
+
+    # def recursive_turn_place_disc_minimax(self, stats_x, n = 0, target = 2): # target is depth level
+    #     if self.over or n >= target:
+    #         red, yellow, _ = self.score_minimax()
+    #         if red - yellow < stats_x[self.red]:
+    #             stats_x[self.red] = red - yellow
+    #         if yellow - red < stats_x[self.yellow]:
+    #             stats_x[self.yellow] = yellow - red
+    #         if self.over:
+    #             if self.win == self.red:
+    #                 stats_x[self.red] += 10000
+    #                 stats_x[self.yellow] -= 10000
+    #             elif self.win == self.yellow:
+    #                 stats_x[self.red] -= 10000
+    #                 stats_x[self.yellow] += 10000
+    #         stats_x["total"] += 1
+    #         self.win = self.empty
+    #         self.over = False
+    #     else:
+    #         x = self.check_win_move()
+    #         if x == -1:
+    #             x = self.check_defensive_move()
+    #             if x == -1:
+    #                 xs = self.available_place_xs()
+    #                 for x in xs:
+    #                     self.turn_place_disc(x)
+    #                     self.recursive_turn_place_disc_minimax(stats_x, n = n + 1, target = target)
+    #                     self.remove_disc(x)
+    #             else:
+    #                 self.turn_place_disc(x)
+    #                 self.recursive_turn_place_disc_minimax(stats_x, n = n + 1, target = target)
+    #                 self.remove_disc(x)
+    #         else:
+    #             self.turn_place_disc(x)
+    #             self.recursive_turn_place_disc_minimax(stats_x, n = n + 1, target = target)
+    #             self.remove_disc(x)
 
     # def recursive_turn_place_disc_minimax_alpha_beta(self, stats_x, n = 0, target = 2, alpha = -math.inf, beta = math.inf, maximizing = 0): # target is depth level
     #     stop = False
@@ -532,6 +545,71 @@ class Game(object):
     #             stop = self.recursive_turn_place_disc_minimax_alpha_beta(stats_x, n = n + 1, target = target, alpha = alpha, beta = beta, maximizing = maximizing)
     #             self.remove_disc(x)
     #     return stop
+
+    def recursive_turn_place_disc_minimax(self, stats_x, n = 0, target = 2, maximizing = 0): # target is depth level
+        if self.over or n >= target:
+            red, yellow, _ = self.score_minimax()
+            # if red - yellow < stats_x[self.red]:
+            stats_x[self.red] = red - yellow
+            # if yellow - red < stats_x[self.yellow]:
+            stats_x[self.yellow] = yellow - red
+            if self.over:
+                if self.win == self.red:
+                    stats_x[self.red] += 10000
+                    stats_x[self.yellow] -= 10000
+                elif self.win == self.yellow:
+                    stats_x[self.red] -= 10000
+                    stats_x[self.yellow] += 10000
+            stats_x["total"] += 1
+            self.win = self.empty
+            self.over = False
+            return stats_x[self.red] if maximizing == self.red else stats_x[self.yellow]
+        else:
+            if self.turn == maximizing:
+                best = -math.inf
+                x = self.check_win_move()
+                if x == -1:
+                    x = self.check_defensive_move()
+                    if x == -1:
+                        xs = self.available_place_xs()
+                        for x in xs:
+                            self.turn_place_disc(x)
+                            val = self.recursive_turn_place_disc_minimax(stats_x, n = n + 1, target = target, maximizing = maximizing)
+                            self.remove_disc(x)
+                            best = max(best, val)
+                    else:
+                        self.turn_place_disc(x)
+                        val = self.recursive_turn_place_disc_minimax(stats_x, n = n + 1, target = target, maximizing = maximizing)
+                        self.remove_disc(x)
+                        best = max(best, val)
+                else:
+                    self.turn_place_disc(x)
+                    val = self.recursive_turn_place_disc_minimax(stats_x, n = n + 1, target = target, maximizing = maximizing)
+                    self.remove_disc(x)
+                    best = max(best, val)
+            else:
+                best = math.inf
+                x = self.check_win_move()
+                if x == -1:
+                    x = self.check_defensive_move()
+                    if x == -1:
+                        xs = self.available_place_xs()
+                        for x in xs:
+                            self.turn_place_disc(x)
+                            val = self.recursive_turn_place_disc_minimax(stats_x, n = n + 1, target = target, maximizing = maximizing)
+                            self.remove_disc(x)
+                            best = min(best, val)
+                    else:
+                        self.turn_place_disc(x)
+                        val = self.recursive_turn_place_disc_minimax(stats_x, n = n + 1, target = target, maximizing = maximizing)
+                        self.remove_disc(x)
+                        best = min(best, val)
+                else:
+                    self.turn_place_disc(x)
+                    val = self.recursive_turn_place_disc_minimax(stats_x, n = n + 1, target = target, maximizing = maximizing)
+                    self.remove_disc(x)
+                    best = min(best, val)
+            return best
 
     def recursive_turn_place_disc_minimax_alpha_beta(self, stats_x, n = 0, target = 2, alpha = -math.inf, beta = math.inf, maximizing = 0): # target is depth level
         if self.over or n >= target:
